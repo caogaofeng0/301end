@@ -39,4 +39,9 @@ export default {
   'menu.account.settings': '个人设置',
   'menu.account.trigger': '触发报错',
   'menu.account.logout': '退出登录',
+
+
+
+  'menu.hospitalUser': '医院用户管理',
+  'menu.hospitalUser.list': '医院用户列表',
 };

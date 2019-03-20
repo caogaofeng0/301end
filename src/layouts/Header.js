@@ -42,6 +42,7 @@ class HeaderView extends Component {
   };
 
   handleNoticeClear = type => {
+    debugger;
     message.success(
       `${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({
         id: `component.globalHeader.${type}`,
