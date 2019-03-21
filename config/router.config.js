@@ -280,42 +280,6 @@ export default [
               name: 'list',
               component: './HospitalUser/TableList',
             },
-            {
-              path: '/hospitalUser/basic-list',
-              name: 'basiclist',
-              component: './HospitalUser/BasicList',
-            },
-            {
-              path: '/hospitalUser/card-list',
-              name: 'cardlist',
-              component: './HospitalUser/CardList',
-            },
-            {
-              path: '/hospitalUser/search',
-              name: 'searchlist',
-              component: './HospitalUser/List',
-              routes: [
-                {
-                  path: '/hospitalUser/search',
-                  redirect: '/hospitalUser/search/articles',
-                },
-                {
-                  path: '/hospitalUser/search/articles',
-                  name: 'articles',
-                  component: './HospitalUser/Articles',
-                },
-                {
-                  path: '/hospitalUser/search/projects',
-                  name: 'projects',
-                  component: './HospitalUser/Projects',
-                },
-                {
-                  path: '/hospitalUser/search/applications',
-                  name: 'applications',
-                  component: './HospitalUser/Applications',
-                },
-              ],
-            },
           ],
         },
       {

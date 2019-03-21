@@ -55,25 +55,11 @@ class HeaderView extends Component {
     });
   };
 
-  handleMenuClick = ({ key }) => {
+  handleSignOut = () => {
     const { dispatch } = this.props;
-    if (key === 'userCenter') {
-      router.push('/account/center');
-      return;
-    }
-    if (key === 'triggerError') {
-      router.push('/exception/trigger');
-      return;
-    }
-    if (key === 'userinfo') {
-      router.push('/account/settings/base');
-      return;
-    }
-    if (key === 'logout') {
       dispatch({
         type: 'login/logout',
       });
-    }
   };
 
   handleNoticeVisibleChange = visible => {
@@ -112,9 +98,10 @@ class HeaderView extends Component {
         this.ticking = false;
       });
     }
-  };
+  }
 
   render() {
+
     const { isMobile, handleMenuCollapse, setting } = this.props;
     const { navTheme, layout, fixedHeader } = setting;
     const { visible } = this.state;
@@ -128,7 +115,7 @@ class HeaderView extends Component {
             mode="horizontal"
             onCollapse={handleMenuCollapse}
             onNoticeClear={this.handleNoticeClear}
-            onMenuClick={this.handleMenuClick}
+            handleSignOut={this.handleSignOut}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
           />
@@ -136,7 +123,7 @@ class HeaderView extends Component {
           <GlobalHeader
             onCollapse={handleMenuCollapse}
             onNoticeClear={this.handleNoticeClear}
-            onMenuClick={this.handleMenuClick}
+            handleSignOut={this.handleSignOut}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
           />
