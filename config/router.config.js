@@ -282,6 +282,29 @@ export default [
             },
           ],
         },
+        // business
+        {
+          path: '/business',
+          name: 'business',
+          icon: 'table',
+          routes: [
+            {
+              path: '/business/analysis',
+              name: 'analysis',
+              component: './Business/Analysis',
+            },
+            {
+              path: '/business/monitor',
+              name: 'monitor',
+              component: './Business/Monitor',
+            },
+            {
+              path: '/business/workplace',
+              name: 'workplace',
+              component: './Business/Workplace',
+            },
+          ],
+        },
       {
         component: '404',
       },

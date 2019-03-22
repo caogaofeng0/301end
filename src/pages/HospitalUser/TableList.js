@@ -195,9 +195,9 @@ class TableList extends PureComponent {
   };
 
   renderAdvancedForm() {
-    // const dateFormat = 'YYYY/MM/DD';
+    const dateFormat = 'YYYY/MM/DD';
     // const monthFormat = 'YYYY/MM';
-    const dateFormatList = ['DD/MM/YYYY','DD/MM/YY']
+    // const dateFormatList = ['DD/MM/YYYY','DD/MM/YY']
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -207,8 +207,8 @@ class TableList extends PureComponent {
           <Col md={5} sm={24}>
             <FormItem label={null}>
               {getFieldDecorator('time')(<DatePicker.RangePicker
-                initialValue={[moment('2015/01/01', dateFormatList), moment('2015/01/01', dateFormatList)]}
-                format={dateFormatList}
+                initialValue={[moment('2015/01/01', dateFormat), moment('2015/01/01', dateFormat)]}
+                format={dateFormat}
               />)}
             </FormItem>
           </Col>

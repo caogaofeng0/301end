@@ -97,7 +97,6 @@ class TimelineChart extends React.Component {
         }}
       />
     );
-
     return (
       <div className={styles.timelineChart} style={{ height: height + 30 }}>
         <div>
