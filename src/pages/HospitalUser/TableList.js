@@ -122,15 +122,12 @@ class TableList extends PureComponent {
   }
   
   getUnbinde = (record) => {
-    
     console.log(record, "------------>1111");
   }
-
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-
     // const filters = Object.keys(filtersArg).reduce((obj, key) => {
     //   const newObj = { ...obj };
     //   newObj[key] = getValue(filtersArg[key]);
