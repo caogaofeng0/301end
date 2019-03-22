@@ -1,6 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Icon, Menu, Dropdown, Card } from 'antd';
+import { Row, Col, Icon, Menu, Dropdown } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import { getTimeDistance } from '@/utils/utils';
 import styles from './Analysis.less';
@@ -127,8 +127,14 @@ class Analysis extends Component {
     );
 
     const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
-    console.log(activeKey, 'activeKey----->');
-    
+    const offlineOptions = {
+      title:"挂号走势图(30天)",
+      titleMap:{
+        y1: '挂号订单数',
+        y2: '挂号订单数2',
+      }
+    };
+
     return (
       <GridContent>
         <Suspense fallback={<PageLoading />}>
@@ -138,11 +144,15 @@ class Analysis extends Component {
           {/* <OfflineData
             activeKey={activeKey}
             loading={loading}
-            offlineData={offlineData}
+            options={offlineOptions}
+            // offlineData={offlineData}
             offlineChartData={offlineChartData}
             // handleTabChange={this.handleTabChange}
           /> */}
-          <LineData />
+          <LineData
+            loading={loading}
+            dataSource={offlineChartData}
+          />
         </Suspense>
         <Suspense fallback={null}>
           <SalesCard

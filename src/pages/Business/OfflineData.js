@@ -4,21 +4,20 @@ import styles from './Analysis.less';
 import { TimelineChart } from '@/components/Charts';
 
 const OfflineData = memo(
-  ({loading, offlineChartData }) => (
+  ({loading, options, offlineChartData }) => (
     <Card
       loading={loading}
       className={styles.offlineCard}
-      bordered={false}
-      title="挂号走势图(30天)"
-      headStyle={{borderBottom:'none', paddingBottom: 0}}
       style={{ marginTop: 32 }}
     >
       <div style={{ padding: '0 24px' }}>
         <TimelineChart
           height={400}
+          title={options.title}
           data={offlineChartData}
           titleMap={{
-            y1: '挂号订单数',
+            y1: options.titleMap.y1,
+            y2:options.titleMap.y2,
           }}
         />
       </div>

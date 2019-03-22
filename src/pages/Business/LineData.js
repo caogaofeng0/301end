@@ -1,22 +1,14 @@
 import React, { memo } from 'react';
 import { Card } from 'antd';
 import {
-  G2,
   Chart,
   Geom,
   Axis,
   Tooltip,
-  Coord,
-  Label,
   Legend,
-  View,
-  Guide,
-  Shape,
-  Facet,
-  Util
 } from "bizcharts";
 import styles from './Analysis.less';
-import { TimelineChart } from '@/components/Charts';
+
 const data = [
   {
     year: "1991",
@@ -65,7 +57,7 @@ const cols = {
 };
 
 const lineData = memo(
-  ({loading, offlineChartData }) => (
+  ({loading, dataSource }) => (
     <Card
       loading={loading}
       className={styles.offlineCard}
@@ -73,26 +65,16 @@ const lineData = memo(
       title="挂号走势图(30天)"
       headStyle={{borderBottom:'none', paddingBottom: 0}}
       style={{ marginTop: 32 }}
-    >
-      <div style={{ padding: '0 24px' }}>
-        <Chart height={400} data={data} scale={cols} forceFit>
+    >   
+      <div style={{padding:"0 34px"}}>
+        <Chart height={400} data={data} scale={cols} forceFit padding={28}>
           <Axis name="year" />
-          <Axis name="valuedd" />
-          <Tooltip
-            crosshairs={{
-                type: "y"
-              }}
-          />
-          <Geom type="line" position="year*value" size={2} />
+          <Tooltip />
+          <Legend name="key" position="top" />
           <Geom
-            type="point"
             position="year*value"
-            size={4}
-            shape="circle"
-            style={{
-                stroke: "#fff",
-                lineWidth: 1
-              }}
+            size={2}
+            type="line"
           />
         </Chart>
       </div>
