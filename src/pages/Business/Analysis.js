@@ -10,9 +10,9 @@ const IntroduceRow = React.lazy(() => import('./IntroduceRow'));
 const SalesCard = React.lazy(() => import('./SalesCard'));
 const TopSearch = React.lazy(() => import('./TopSearch'));
 const ProportionSales = React.lazy(() => import('./ProportionSales'));
-const OfflineData = React.lazy(() => import('./OfflineData'));
+// const OfflineData = React.lazy(() => import('./OfflineData'));
 const LineData = React.lazy(() => import('./LineData'));
-
+const Apie = React.lazy(() => import('./Apie'));
 
 @connect(({ chart, loading }) => ({
   chart,
@@ -21,7 +21,6 @@ const LineData = React.lazy(() => import('./LineData'));
 class Analysis extends Component {
   state = {
     salesType: 'all',
-    currentTabKey: '',
     rangePickerValue: getTimeDistance('year'),
   };
 
@@ -48,11 +47,11 @@ class Analysis extends Component {
     });
   };
 
-  handleTabChange = key => {
-    this.setState({
-      currentTabKey: key,
-    });
-  };
+  // handleTabChange = key => {
+  //   this.setState({
+  //     currentTabKey: key,
+  //   });
+  // };
 
   handleRangePickerChange = rangePickerValue => {
     const { dispatch } = this.props;
@@ -92,7 +91,7 @@ class Analysis extends Component {
   };
 
   render() {
-    const { rangePickerValue, salesType, currentTabKey } = this.state;
+    const { rangePickerValue, salesType } = this.state;
     const { chart, loading } = this.props;
     const {
       visitData,
@@ -126,34 +125,34 @@ class Analysis extends Component {
       </span>
     );
 
-    const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
-    const offlineOptions = {
-      title:"挂号走势图(30天)",
-      titleMap:{
-        y1: '挂号订单数',
-        y2: '挂号订单数2',
-      }
-    };
-
     return (
       <GridContent>
         <Suspense fallback={<PageLoading />}>
           <IntroduceRow loading={loading} visitData={visitData} />
         </Suspense>
         <Suspense fallback={null}>
-          {/* <OfflineData
-            activeKey={activeKey}
-            loading={loading}
-            options={offlineOptions}
-            // offlineData={offlineData}
-            offlineChartData={offlineChartData}
-            // handleTabChange={this.handleTabChange}
-          /> */}
-          <LineData
-            loading={loading}
-            dataSource={offlineChartData}
-          />
+          <LineData loading={loading} dataSource={offlineChartData} />
         </Suspense>
+        <div className={styles.twoColLayout}>
+          <Row gutter={24}>
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <Apie loading={loading} dataSource={offlineData} />
+              </Suspense>
+            </Col>
+            <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+              <Suspense fallback={null}>
+                <ProportionSales
+                  dropdownGroup={dropdownGroup}
+                  salesType={salesType}
+                  loading={loading}
+                  salesPieData={salesPieData}
+                  handleChangeSalesType={this.handleChangeSalesType}
+                />
+              </Suspense>
+            </Col>
+          </Row>
+        </div>
         <Suspense fallback={null}>
           <SalesCard
             rangePickerValue={rangePickerValue}
