@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { Row, Col, Icon, Tooltip } from 'antd';
 import numeral from 'numeral';
-import styles from './Analysis.less';
-import { ChartCard, MiniArea, MiniBar, MiniProgress, Field } from '@/components/Charts';
+import styles from './No.less';
+import { ChartCard } from '@/components/Charts';
 import Trend from '@/components/Trend';
 // import Yuan from '@/utils/Yuan';
 
@@ -15,16 +15,15 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = memo(({ loading, visitData }) => (
+// eslint-disable-next-line no-unused-vars
+const IntroduceRow = memo(({ loading, visitData, option }) => (
   <Row gutter={24}>
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title='挂号平台数'
+        title={option[0]}
         action={
-          <Tooltip
-            title='平台'
-          >
+          <Tooltip title={option[0]}>
             <Icon type="info-circle-o" />
           </Tooltip>
         }
@@ -41,11 +40,9 @@ const IntroduceRow = memo(({ loading, visitData }) => (
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title='挂号用户数'
+        title={option[1]}
         action={
-          <Tooltip
-            title='用户'
-          >
+          <Tooltip title={option[1]}>
             <Icon type="info-circle-o" />
           </Tooltip>
         }
@@ -62,11 +59,9 @@ const IntroduceRow = memo(({ loading, visitData }) => (
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title='挂号数'
+        title={option[2]}
         action={
-          <Tooltip
-            title='挂号数'
-          >
+          <Tooltip title={option[2]}>
             <Icon type="info-circle-o" />
           </Tooltip>
         }
@@ -83,11 +78,9 @@ const IntroduceRow = memo(({ loading, visitData }) => (
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title='总收入'
+        title={option[3]}
         action={
-          <Tooltip
-            title='收入'
-          >
+          <Tooltip title={option[3]}>
             <Icon type="info-circle-o" />
           </Tooltip>
         }
