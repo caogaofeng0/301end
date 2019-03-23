@@ -224,7 +224,7 @@ export default [
             routes: [
               {
                 path: '/account/center',
-                redirect: '/account/center/articles',
+                redirect: '/Account/center/articles',
               },
               {
                 path: '/account/center/articles',
@@ -297,6 +297,29 @@ export default [
             path: '/business/user',
             name: 'user',
             component: './Business/User',
+          },
+        ],
+      },
+      // info
+      {
+        name: 'info',
+        icon: 'user',
+        path: '/info',
+        routes: [
+          {
+            path: '/info',
+            name: 'InfoDepart',
+            component: './Info/InfoDepart',
+            routes: [
+              {
+                path: '/info/doctor',
+                component: './Info/Doctor',
+              },
+              {
+                path: '/info/projects',
+                component: './Info/Projects',
+              },
+            ],
           },
         ],
       },

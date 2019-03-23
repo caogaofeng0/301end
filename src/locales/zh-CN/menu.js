@@ -46,4 +46,7 @@ export default {
   'menu.business.no': '挂号统计',
   'menu.business.user': '用户统计',
   'menu.business.workplace': '统计',
+  'menu.info': '医院信息管理',
+  'menu.info.InfoDepart': '科室信息',
+  'menu.info.settings': '个人设置',
 };
