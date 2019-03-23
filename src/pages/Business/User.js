@@ -18,7 +18,7 @@ const Abar = React.lazy(() => import('./Abar'));
 }))
 class User extends Component {
   state = {
-    salesType: 'all',
+    noType: 'add',
     rangePickerValue: getTimeDistance('year'),
   };
 
@@ -39,9 +39,9 @@ class User extends Component {
     cancelAnimationFrame(this.reqRef);
   }
 
-  handleChangeSalesType = e => {
+  handleChangeNoType = e => {
     this.setState({
-      salesType: e.target.value,
+      noType: e.target.value,
     });
   };
 
@@ -89,7 +89,7 @@ class User extends Component {
   };
 
   render() {
-    const { rangePickerValue, salesType } = this.state;
+    const { rangePickerValue, noType } = this.state;
     const { chart, loading } = this.props;
     const {
       visitData,
@@ -103,25 +103,11 @@ class User extends Component {
       salesTypeDataOffline,
     } = chart;
     let salesPieData;
-    if (salesType === 'all') {
+    if (noType === 'all') {
       salesPieData = salesTypeData;
     } else {
-      salesPieData = salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
+      salesPieData = noType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
     }
-    const menu = (
-      <Menu>
-        <Menu.Item>操作一</Menu.Item>
-        <Menu.Item>操作二</Menu.Item>
-      </Menu>
-    );
-
-    // const dropdownGroup = (
-    //   <span className={styles.iconGroup}>
-    //     <Dropdown overlay={menu} placement="bottomRight">
-    //       <Icon type="ellipsis" />
-    //     </Dropdown>
-    //   </span>
-    // );
 
     const optionText = {
       row: ['用户数', '绑定患者数', '实名用户数', '异常用户增量数'],
@@ -139,7 +125,13 @@ class User extends Component {
           <IntroduceRow loading={loading} visitData={visitData} option={optionText.row} />
         </Suspense>
         <Suspense fallback={null}>
-          <Aline loading={loading} dataSource={offlineChartData} option={optionText.line} />
+          <Aline
+            loading={loading}
+            dataSource={offlineChartData}
+            option={optionText.line}
+            noType={noType}
+            handleChangeNoType={this.handleChangeNoType}
+          />
         </Suspense>
         <div className={styles.twoColLayout}>
           <Row gutter={24}>

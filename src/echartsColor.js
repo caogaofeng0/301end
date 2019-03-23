@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable prefer-const */
 /* eslint-disable no-undef */
@@ -27,12 +28,12 @@
   }
   echarts.registerTheme('macarons', {
     color: [
-      '#1890FF',
-      '#b6a2de',
-      '#5ab1ef',
-      '#ffb980',
-      '#d87a80',
-      '#8d98b3',
+      '#529FFF',
+      '#37C2BF',
+      '#45C461',
+      '#F3C834',
+      '#EC4A68',
+      '#8443DE',
       '#e5cf0d',
       '#97b552',
       '#95706d',

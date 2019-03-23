@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Icon, Menu, Dropdown } from 'antd';
@@ -10,7 +11,7 @@ const IntroduceRow = React.lazy(() => import('./IntroduceRow'));
 const SalesCard = React.lazy(() => import('./SalesCard'));
 const TopSearch = React.lazy(() => import('./TopSearch'));
 const ProportionSales = React.lazy(() => import('./ProportionSales'));
-const OfflineData = React.lazy(() => import('./OfflineData'));
+// const OfflineData = React.lazy(() => import('./OfflineData'));
 
 @connect(({ chart, loading }) => ({
   chart,
@@ -90,15 +91,15 @@ class Analysis extends Component {
   };
 
   render() {
-    const { rangePickerValue, salesType, currentTabKey } = this.state;
+    const { rangePickerValue, salesType } = this.state;
     const { chart, loading } = this.props;
     const {
       visitData,
       visitData2,
       salesData,
       searchData,
-      offlineData,
-      offlineChartData,
+      // offlineData,
+      // offlineChartData,
       salesTypeData,
       salesTypeDataOnline,
       salesTypeDataOffline,
@@ -124,7 +125,7 @@ class Analysis extends Component {
       </span>
     );
 
-    const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
+    // const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
 
     return (
       <GridContent>
@@ -167,7 +168,7 @@ class Analysis extends Component {
             </Col>
           </Row>
         </div>
-        <Suspense fallback={null}>
+        {/* <Suspense fallback={null}>
           <OfflineData
             activeKey={activeKey}
             loading={loading}
@@ -175,7 +176,7 @@ class Analysis extends Component {
             offlineChartData={offlineChartData}
             handleTabChange={this.handleTabChange}
           />
-        </Suspense>
+        </Suspense> */}
       </GridContent>
     );
   }

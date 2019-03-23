@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'antd';
+import { Card, Radio } from 'antd';
 import echarts from 'echarts/dist/echarts';
 import ReactEcharts from 'echarts-for-react';
 import macarons from '../../echartsColor';
@@ -9,7 +9,7 @@ import 'echarts/lib/component/title';
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/markPoint';
 
-// import styles from './Analysis.less';
+import styles from './Aline.less';
 
 class LineData extends React.Component {
   // eslint-disable-next-line no-useless-constructor
@@ -44,13 +44,26 @@ class LineData extends React.Component {
   };
 
   render() {
-    const { loading, option } = this.props;
+    const { loading, option, noType, handleChangeNoType } = this.props;
+
     return (
       <Card
         loading={loading}
         // className={styles.Apie}
         bordered={false}
         title={option[0]}
+        extra={
+          noType && handleChangeNoType ? (
+            <div className={styles.noCardExtra}>
+              <div className={styles.noTypeRadio}>
+                <Radio.Group value={noType} onChange={handleChangeNoType}>
+                  <Radio.Button value="add">增量</Radio.Button>
+                  <Radio.Button value="all">总量</Radio.Button>
+                </Radio.Group>
+              </div>
+            </div>
+          ) : null
+        }
         style={{ marginTop: 24 }}
       >
         <ReactEcharts option={this.getOption()} theme="macarons" style={{ height: 500 }} />
