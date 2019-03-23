@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'antd';
-// import echarts from 'echarts/dist/echarts';
+import echarts from 'echarts/dist/echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/toolbox';
 import 'echarts/lib/component/title';
@@ -16,7 +16,9 @@ class Apie extends React.Component {
     super(props);
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    echarts.registerTheme('macarons');
+  }
 
   getOption = () => {
     const option = {
