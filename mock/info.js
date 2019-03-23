@@ -114,11 +114,12 @@ let sourceData;
 function getFakeList(req, res) {
   const params = req.query;
 
-  const count = params.count * 1 || 20;
+  const count = params.count * 1 || 10;
 
   const result = fakeList(count);
+  const getData = { list: result, pagination: { total: 46, pageSize: 10, current: 1 } };
   sourceData = result;
-  return res.json(result);
+  return res.json(getData);
 }
 
 function postFakeList(req, res) {

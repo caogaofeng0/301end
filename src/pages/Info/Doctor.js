@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
@@ -7,7 +8,7 @@ import router from 'umi/router';
 import { Row, Col, Card, Form, Input, Button, Divider, DatePicker, Select, Icon } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-// import confirmPopCon from './confirmPopCon';
+import EditDoc from './EditDoc';
 import styles from './Doctor.less';
 
 const FormItem = Form.Item;
@@ -24,6 +25,9 @@ class DoctorList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    visibleStatus: false,
+    confirmLoading: false,
+    ModalText: 'didiidiid',
   };
 
   columns = [
@@ -62,6 +66,17 @@ class DoctorList extends PureComponent {
    */
   handDoctorInfo = (text, record) => {
     console.log(text, record, '-------->');
+    const { visibleStatus } = this.state;
+    this.setState({
+      visibleStatus: true,
+    });
+  };
+
+  hideEditModal = () => {
+    const { visibleStatus } = this.state;
+    this.setState({
+      visibleStatus: false,
+    });
   };
 
   handleStatusChange = () => {
@@ -167,25 +182,38 @@ class DoctorList extends PureComponent {
     );
   }
 
+  handleEditModal = e => {
+    console.log(e, '-------->ed');
+  };
+
   render() {
     const {
       info: { data },
       loading,
     } = this.props;
-    console.log(data, '---------list');
-    const { selectedRows } = this.state;
+    // console.log(data, '---------list----->');
+    const { selectedRows, visibleStatus, confirmLoading, ModalText } = this.state;
     return (
       <PageHeaderWrapper title={null}>
+        <EditDoc
+          visibleStatus={visibleStatus}
+          confirmLoading={confirmLoading}
+          handleEditModal={this.handleEditModal}
+          hideEditModal={this.hideEditModal}
+          ModalText={ModalText}
+        />
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
             <StandardTable
+              rowKey={record => record.id}
               selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={this.columns}
               rowSelection={null}
               onChange={this.handleStandardTableChange}
+              // styles={{height: "80%", minHeight: 500}}
             />
           </div>
         </Card>

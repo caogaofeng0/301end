@@ -21,9 +21,6 @@ export default {
 
   reducers: {
     save(state, action) {
-      setTimeout(() => {
-        console.log(...state, '-------->');
-      }, 4000);
       return {
         ...state,
         data: action.payload,
