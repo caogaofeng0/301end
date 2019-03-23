@@ -27,7 +27,7 @@
   }
   echarts.registerTheme('macarons', {
     color: [
-      '#2ec7c9',
+      '#1890FF',
       '#b6a2de',
       '#5ab1ef',
       '#ffb980',

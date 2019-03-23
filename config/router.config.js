@@ -269,42 +269,37 @@ export default [
           },
         ],
       },
-         // list
-         {
-          path: '/hospitalUser',
-          icon: 'table',
-          name: 'hospitalUser',
-          routes: [
-            {
-              path: '/hospitalUser/table-list',
-              name: 'list',
-              component: './HospitalUser/TableList',
-            },
-          ],
-        },
-        // business
-        {
-          path: '/business',
-          name: 'business',
-          icon: 'table',
-          routes: [
-            {
-              path: '/business/analysis',
-              name: 'analysis',
-              component: './Business/Analysis',
-            },
-            {
-              path: '/business/monitor',
-              name: 'monitor',
-              component: './Business/Monitor',
-            },
-            {
-              path: '/business/workplace',
-              name: 'workplace',
-              component: './Business/Workplace',
-            },
-          ],
-        },
+      // list
+      {
+        path: '/hospitalUser',
+        icon: 'table',
+        name: 'hospitalUser',
+        routes: [
+          {
+            path: '/hospitalUser/table-list',
+            name: 'list',
+            component: './HospitalUser/TableList',
+          },
+        ],
+      },
+      // business
+      {
+        path: '/business',
+        name: 'business',
+        icon: 'table',
+        routes: [
+          {
+            path: '/business/no',
+            name: 'no',
+            component: './Business/No',
+          },
+          {
+            path: '/business/user',
+            name: 'user',
+            component: './Business/User',
+          },
+        ],
+      },
       {
         component: '404',
       },
