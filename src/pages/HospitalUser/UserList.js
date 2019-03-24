@@ -335,7 +335,7 @@ class UserList extends PureComponent {
           ) : null}
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            scroll={{ y: 200 }}
+            scroll={{ y: clientHeight - 370 }}
             selectedRows={selectedRows}
             loading={loading}
             data={data}

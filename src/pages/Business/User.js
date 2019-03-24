@@ -48,7 +48,6 @@ class User extends Component {
       business: { topDataUser },
       loading,
     } = this.props;
-    // console.log(topDataUser, 'topDataUser');
 
     const optionText = {
       row: ['用户数', '绑定患者数', '实名用户数', '异常用户增量数'],

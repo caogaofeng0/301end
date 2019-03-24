@@ -14,8 +14,9 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ rule, loading }) => ({
+@connect(({ rule, loading, global }) => ({
   rule,
+  global,
   loading: loading.models.rule,
 }))
 @Form.create()
@@ -238,6 +239,7 @@ class BindUser extends PureComponent {
     const {
       rule: { data },
       loading,
+      global: { clientHeight },
     } = this.props;
     return (
       // <PageHeaderWrapper title={null}>
@@ -245,6 +247,7 @@ class BindUser extends PureComponent {
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
+            scroll={{ y: clientHeight - 425 }}
             rowKey={rowKey => rowKey.name}
             selectedRows={[]}
             loading={loading}

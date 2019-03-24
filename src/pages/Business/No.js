@@ -109,7 +109,6 @@ class Analysis extends Component {
   render() {
     const { business, loading } = this.props;
     const { topData } = business;
-    console.log(topData, 'topData');
     const optionText = {
       row: ['挂号平台数', '挂号用户数', '挂号数', '总收入'],
       line: ['挂号走势图(30天)', '挂号订单数'],

@@ -50,6 +50,19 @@ class BasicLayout extends React.Component {
       dispatch,
       route: { routes, authority },
     } = this.props;
+    // eslint-disable-next-line no-var
+    var tableHeight = document.documentElement.clientHeight;
+    window.addEventListener('resize', () => {
+      tableHeight = document.documentElement.clientHeight;
+      dispatch({
+        type: 'global/saveClientHeight',
+        payload: tableHeight,
+      });
+    });
+    dispatch({
+      type: 'global/saveClientHeight',
+      payload: tableHeight,
+    });
     dispatch({
       type: 'user/fetchCurrent',
     });

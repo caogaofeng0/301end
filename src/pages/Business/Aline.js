@@ -64,7 +64,6 @@ class LineData extends React.Component {
             </div>
           ) : null
         }
-        style={{ marginTop: 24 }}
       >
         <ReactEcharts option={this.getOption()} theme="macarons" style={{ height: 500 }} />
       </Card>

@@ -14,8 +14,9 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ hUser, loading }) => ({
+@connect(({ hUser, loading, global }) => ({
   hUser,
+  global,
   loading: loading.models.hUser,
 }))
 @Form.create()
@@ -175,6 +176,7 @@ class BindUserHistory extends PureComponent {
     const {
       hUser: { bindData },
       loading,
+      global: { clientHeight },
     } = this.props;
     const { selectedRows } = this.state;
     console.log(bindData, '进入渲染');
@@ -185,6 +187,7 @@ class BindUserHistory extends PureComponent {
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
+            scroll={{ y: clientHeight - 370 }}
             rowKey={rowKey => rowKey.num}
             selectedRows={selectedRows}
             loading={loading}
