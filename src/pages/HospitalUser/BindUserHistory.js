@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -5,7 +6,7 @@ import router from 'umi/router';
 import { Row, Col, Card, Form, Button, DatePicker, Select } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import styles from './TableList.less';
+import styles from './UserList.less';
 
 const dateFormat = 'YYYY/MM/DD';
 const FormItem = Form.Item;
@@ -13,9 +14,9 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ rule, loading }) => ({
-  rule,
-  loading: loading.models.rule,
+@connect(({ hUser, loading }) => ({
+  hUser,
+  loading: loading.models.hUser,
 }))
 @Form.create()
 class BindUserHistory extends PureComponent {
@@ -27,16 +28,16 @@ class BindUserHistory extends PureComponent {
   columns = [
     {
       title: '就诊时间',
-      dataIndex: 'name',
+      dataIndex: 'time',
       render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
       title: '就诊序号',
-      dataIndex: 'owner',
+      dataIndex: 'num',
     },
     {
       title: '号别',
-      dataIndex: 'updatedAt',
+      dataIndex: 'otherNum',
       render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
@@ -45,18 +46,18 @@ class BindUserHistory extends PureComponent {
     },
     {
       title: '费别',
-      dataIndex: 'createdAt',
+      dataIndex: 'money',
     },
     {
       title: '挂号途径',
-      dataIndex: 'createdAt',
+      dataIndex: 'line',
     },
   ];
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'rule/fetch',
+      type: 'hUser/bindFetch',
     });
   }
 
@@ -80,7 +81,7 @@ class BindUserHistory extends PureComponent {
     }
 
     dispatch({
-      type: 'rule/fetch',
+      type: 'hUser/bindFetch',
       payload: params,
     });
   };
@@ -96,7 +97,7 @@ class BindUserHistory extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'rule/fetch',
+      type: 'hUser/bindFetch',
       payload: {},
     });
   };
@@ -116,7 +117,7 @@ class BindUserHistory extends PureComponent {
       });
 
       dispatch({
-        type: 'rule/fetch',
+        type: 'hUser/bindFetch',
         payload: values,
       });
     });
@@ -133,7 +134,7 @@ class BindUserHistory extends PureComponent {
             <FormItem label={null}>
               {getFieldDecorator('center')(
                 <RangePicker
-                  defaultValue={[
+                  initialValue={[
                     moment('2015/01/01', dateFormat),
                     moment('2015/01/01', dateFormat),
                   ]}
@@ -145,7 +146,7 @@ class BindUserHistory extends PureComponent {
           <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('platform')(
-                <Select placeholder="请选择挂号途径">
+                <Select placeholder="请选择挂号途径" initialValue="">
                   <Option value="jack">Jack</Option>
                   <Option value="lucy">Lucy</Option>
                   <Option value="tom">Tom</Option>
@@ -172,26 +173,29 @@ class BindUserHistory extends PureComponent {
 
   render() {
     const {
-      rule: { data },
+      hUser: { bindData },
       loading,
     } = this.props;
     const { selectedRows } = this.state;
+    console.log(bindData, '进入渲染');
+
     return (
-      <PageHeaderWrapper title={null}>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
-            <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={data}
-              columns={this.columns}
-              rowSelection={null}
-              onChange={this.handleStandardTableChange}
-            />
-          </div>
-        </Card>
-      </PageHeaderWrapper>
+      // <PageHeaderWrapper title={null}>
+      <Card bordered={false}>
+        <div className={styles.tableList}>
+          <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
+          <StandardTable
+            rowKey={rowKey => rowKey.num}
+            selectedRows={selectedRows}
+            loading={loading}
+            data={bindData}
+            columns={this.columns}
+            rowSelection={null}
+            onChange={this.handleStandardTableChange}
+          />
+        </div>
+      </Card>
+      // </PageHeaderWrapper>
     );
   }
 }

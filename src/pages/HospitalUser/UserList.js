@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import classNames from 'classnames';
@@ -9,18 +10,18 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import confirmPopCon from './confirmPopCon';
 import UserNoModal from './UserNoModal';
 
-import styles from './TableList.less';
+import styles from './UserList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ rule, loading }) => ({
+@connect(({ rule, hUser, loading }) => ({
   rule,
   loading: loading.models.rule,
 }))
 @Form.create()
-class TableList extends PureComponent {
+class UserList extends PureComponent {
   state = {
     expandForm: false,
     selectedRows: [],
@@ -64,7 +65,7 @@ class TableList extends PureComponent {
       title: '操作',
       render: (text, record) => (
         <Fragment>
-          <a onClick={() => this.unbind(text, record)}>绑定的患者</a>
+          <a onClick={() => this.bindUser(text, record)}>绑定的患者</a>
           <Divider type="vertical" />
           <a onClick={() => this.noHistory(text, record)}>用户挂号记录</a>
           <Divider type="vertical" />
@@ -117,6 +118,18 @@ class TableList extends PureComponent {
       okText: '确定',
     };
     confirmPopCon(params, record, this.getUnbinde);
+  };
+
+  /**
+   * 绑定的患者
+   */
+  bindUser = v => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'hUser/saveID',
+      payload: v.name,
+    });
+    router.push('/hospitalUser/userlist/bindUser');
   };
 
   getUnbinde = record => {
@@ -304,31 +317,31 @@ class TableList extends PureComponent {
     } = this.props;
     const { selectedRows, showStatus } = this.state;
     return (
-      <PageHeaderWrapper title={null}>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            {showStatus ? (
-              <UserNoModal
-                showStatus={showStatus}
-                hideNoModal={this.hideNoModal}
-                confirmLoading={false}
-                handleNoModal={this.handleNoModal}
-              />
-            ) : null}
-            <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
-            <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={data}
-              columns={this.columns}
-              rowSelection={null}
-              onChange={this.handleStandardTableChange}
+      // <PageHeaderWrapper title={null}>
+      <Card bordered={false}>
+        <div className={styles.tableList}>
+          {showStatus ? (
+            <UserNoModal
+              showStatus={showStatus}
+              hideNoModal={this.hideNoModal}
+              confirmLoading={false}
+              handleNoModal={this.handleNoModal}
             />
-          </div>
-        </Card>
-      </PageHeaderWrapper>
+          ) : null}
+          <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
+          <StandardTable
+            selectedRows={selectedRows}
+            loading={loading}
+            data={data}
+            columns={this.columns}
+            rowSelection={null}
+            onChange={this.handleStandardTableChange}
+          />
+        </div>
+      </Card>
+      // </PageHeaderWrapper>
     );
   }
 }
 
-export default TableList;
+export default UserList;

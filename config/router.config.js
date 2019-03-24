@@ -269,24 +269,11 @@ export default [
           },
         ],
       },
-      // list
-      {
-        path: '/hospitalUser',
-        icon: 'table',
-        name: 'hospitalUser',
-        routes: [
-          {
-            path: '/hospitalUser/table-list',
-            name: 'list',
-            component: './HospitalUser/TableList',
-          },
-        ],
-      },
       // business
       {
         path: '/business',
         name: 'business',
-        icon: 'table',
+        icon: 'dashboard',
         routes: [
           {
             path: '/business/no',
@@ -300,10 +287,48 @@ export default [
           },
         ],
       },
+      // list
+      {
+        path: '/hospitalUser',
+        icon: 'table',
+        name: 'hospitalUser',
+        routes: [
+          {
+            path: '/hospitalUser/userlist',
+            name: 'list',
+            component: './HospitalUser/User',
+            routes: [
+              {
+                path: '/hospitalUser/userlist',
+                component: './HospitalUser/UserList',
+              },
+              {
+                path: '/hospitalUser/userlist/bindUser',
+                component: './HospitalUser/BindUser',
+              },
+              {
+                path: '/hospitalUser/userlist/bindhistory',
+                component: './HospitalUser/BindUserHistory',
+              },
+            ],
+          },
+          // {
+          //   path: '/hospitalUser/bindUser',
+          //   name: 'bind',
+          //   component: './HospitalUser/BindUser',
+          // },
+          // {
+          //   path: '/hospitalUser/bindHistory',
+          //   name: 'history',
+          //   component: './HospitalUser/BindUserHistory',
+          // },
+        ],
+      },
+
       // info
       {
         name: 'info',
-        icon: 'user',
+        icon: 'check-circle',
         path: '/info',
         routes: [
           {

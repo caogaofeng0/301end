@@ -1,8 +1,22 @@
 import React, { PureComponent } from 'react';
 import numeral from 'numeral';
+import router from 'umi/router';
 import { connect } from 'dva';
 import { FormattedMessage } from 'umi/locale';
-import { Row, Col, Form, Card, Select, Icon, Avatar, List, Tooltip, Dropdown, Menu } from 'antd';
+import {
+  Row,
+  Col,
+  Form,
+  Card,
+  Select,
+  Icon,
+  Avatar,
+  List,
+  Tooltip,
+  Dropdown,
+  Menu,
+  Button,
+} from 'antd';
 import TagSelect from '@/components/TagSelect';
 import StandardFormRow from '@/components/StandardFormRow';
 
@@ -41,6 +55,10 @@ class FilterCardList extends PureComponent {
       },
     });
   }
+
+  ongoet = () => {
+    router.push(`/list/search/articles`);
+  };
 
   render() {
     const {
@@ -147,6 +165,7 @@ class FilterCardList extends PureComponent {
             </StandardFormRow>
           </Form>
         </Card>
+        <Button onClick={this.ongoet}>567890-=</Button>
         <List
           rowKey="id"
           style={{ marginTop: 24 }}

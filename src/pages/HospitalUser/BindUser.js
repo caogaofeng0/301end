@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unused-state */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import router from 'umi/router';
-import { Row, Col, Card, Form, Button, Divider, Select } from 'antd';
+import { Row, Col, Card, Form, Button, Divider, Select, Input } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import confirmPopCon from './confirmPopCon';
-import styles from './TableList.less';
+import styles from './BindUser.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -135,9 +136,7 @@ class BindUser extends PureComponent {
   // eslint-disable-next-line no-unused-vars
   noHistory = (text, record) => {
     //  const {showStatus} = this.state;
-    this.setState({
-      showStatus: true,
-    });
+    router.push('/hospitalUser/userlist/bindhistory');
   };
 
   hideNoModal = () => {
@@ -179,7 +178,7 @@ class BindUser extends PureComponent {
     } = this.props;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }} className={styles.bindUserRow}>
           <Col md={8} sm={24}>
             <FormItem label={null}>
               {getFieldDecorator('center')(
@@ -194,7 +193,7 @@ class BindUser extends PureComponent {
           <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('platform')(
-                <Select placeholder="请选择第三方平台id">
+                <Select placeholder="请选择第三方平台id" initialValue="">
                   <Option value="jack">Jack</Option>
                   <Option value="lucy">Lucy</Option>
                   <Option value="tom">Tom</Option>
@@ -205,7 +204,7 @@ class BindUser extends PureComponent {
           <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('status')(
-                <Select placeholder="请选择患者状态">
+                <Select placeholder="请选择患者状态" initialValue="">
                   <Option value="jack">Jack</Option>
                   <Option value="lucy">Lucy</Option>
                   <Option value="tom">Tom</Option>
@@ -215,7 +214,7 @@ class BindUser extends PureComponent {
           </Col>
           <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
-              {getFieldDecorator('num')(<input placeholder="输入门诊号搜索" />)}
+              {getFieldDecorator('num')(<Input placeholder="输入门诊号搜索" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -240,23 +239,23 @@ class BindUser extends PureComponent {
       rule: { data },
       loading,
     } = this.props;
-    const { selectedRows } = this.state;
     return (
-      <PageHeaderWrapper title={null}>
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
-            <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={data}
-              columns={this.columns}
-              rowSelection={null}
-              onChange={this.handleStandardTableChange}
-            />
-          </div>
-        </Card>
-      </PageHeaderWrapper>
+      // <PageHeaderWrapper title={null}>
+      <Card bordered={false}>
+        <div className={styles.tableList}>
+          <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
+          <StandardTable
+            rowKey={rowKey => rowKey.name}
+            selectedRows={[]}
+            loading={loading}
+            data={data}
+            columns={this.columns}
+            rowSelection={null}
+            onChange={this.handleStandardTableChange}
+          />
+        </div>
+      </Card>
+      // </PageHeaderWrapper>
     );
   }
 }

@@ -42,6 +42,8 @@ export default {
 
   'menu.hospitalUser': '医院用户管理',
   'menu.hospitalUser.list': '医院用户列表',
+  'menu.hospitalUser.bind': '绑定',
+  'menu.hospitalUser.history': '绑定历史',
   'menu.business': '医院业务管理',
   'menu.business.no': '挂号统计',
   'menu.business.user': '用户统计',

@@ -1,4 +1,4 @@
-import { userNoHistory } from '@/services/hospitalUser';
+import { userNoHistory, userBindHistory } from '@/services/hospitalUser';
 
 export default {
   namespace: 'hUser',
@@ -7,6 +7,11 @@ export default {
       list: [],
       pagination: {},
     },
+    bindData: {
+      list: [],
+      pagination: {},
+    },
+    bindId: '',
   },
 
   effects: {
@@ -17,6 +22,13 @@ export default {
         payload: response,
       });
     },
+    *bindFetch({ payload }, { call, put }) {
+      const response = yield call(userBindHistory, payload);
+      yield put({
+        type: 'bindSave',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -24,6 +36,18 @@ export default {
       return {
         ...state,
         data: action.payload,
+      };
+    },
+    bindSave(state, action) {
+      return {
+        ...state,
+        bindData: action.payload,
+      };
+    },
+    saveID(state, action) {
+      return {
+        ...state,
+        bindId: action.payload,
       };
     },
   },

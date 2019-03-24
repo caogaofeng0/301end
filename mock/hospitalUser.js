@@ -31,4 +31,20 @@ export default {
     ],
     pagination: { total: 46, pageSize: 10, current: 1 },
   }),
+  'GET /api/user/bind/history': mockjs.mock({
+    code: '200',
+    'list|10': [
+      {
+        time: 2012 - 10 - 19,
+        'num|+1': 1,
+        'otherNum|+1': 10,
+        createdAt: '医生',
+        money: 700,
+        line: '微医',
+        address: '西湖区工专路 77 号',
+        phone: '0752-268888888',
+      },
+    ],
+    pagination: { total: 46, pageSize: 10, current: 1 },
+  }),
 };
