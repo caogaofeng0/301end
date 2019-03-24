@@ -2,10 +2,10 @@ import { queryNotices } from '@/services/api';
 
 export default {
   namespace: 'global',
-
   state: {
     collapsed: false,
     notices: [],
+    clientHeight: 0,
   },
 
   effects: {
@@ -84,6 +84,13 @@ export default {
       return {
         ...state,
         notices: state.notices.filter(item => item.type !== payload),
+      };
+    },
+    saveClientHeight(state, { payload }) {
+      console.log('clientHeight', payload);
+      return {
+        ...state,
+        clientHeight: payload,
       };
     },
   },

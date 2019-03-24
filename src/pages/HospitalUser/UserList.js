@@ -16,8 +16,9 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ rule, hUser, loading }) => ({
+@connect(({ rule, hUser, loading, global }) => ({
   rule,
+  global,
   loading: loading.models.rule,
 }))
 @Form.create()
@@ -314,10 +315,13 @@ class UserList extends PureComponent {
     const {
       rule: { data },
       loading,
+      global: { clientHeight },
     } = this.props;
     const { selectedRows, showStatus } = this.state;
+    console.log(clientHeight, '---------->');
     return (
       // <PageHeaderWrapper title={null}>
+
       <Card bordered={false}>
         <div className={styles.tableList}>
           {showStatus ? (
@@ -330,6 +334,7 @@ class UserList extends PureComponent {
           ) : null}
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
+            scroll={{ y: 240 }}
             selectedRows={selectedRows}
             loading={loading}
             data={data}

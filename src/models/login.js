@@ -7,7 +7,6 @@ import { reloadAuthorized } from '@/utils/Authorized';
 
 export default {
   namespace: 'login',
-
   state: {
     status: undefined,
   },
