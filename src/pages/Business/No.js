@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Icon, Menu, Dropdown, Form, Select, DatePicker, Button } from 'antd';
+import { Row, Col, Form, Select, DatePicker, Button } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
-import { getTimeDistance } from '@/utils/utils';
+// import { getTimeDistance } from '@/utils/utils';
 import styles from './No.less';
 import PageLoading from '@/components/PageLoading';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
@@ -19,21 +18,19 @@ const Apie = React.lazy(() => import('./Apie'));
 const Abar = React.lazy(() => import('./Abar'));
 const FormItem = Form.Item;
 
-@connect(({ chart, loading }) => ({
-  chart,
-  loading: loading.effects['chart/fetch'],
+@connect(({ loading, business }) => ({
+  business,
+  loading: loading.effects['business/topData'],
 }))
 @Form.create()
 class Analysis extends Component {
-  state = {
-    rangePickerValue: getTimeDistance('year'),
-  };
+  state = {};
 
   componentDidMount() {
     const { dispatch } = this.props;
     this.reqRef = requestAnimationFrame(() => {
       dispatch({
-        type: 'chart/fetch',
+        type: 'business/topData',
       });
     });
   }
@@ -41,53 +38,10 @@ class Analysis extends Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'chart/clear',
+      type: 'topData/clear',
     });
     cancelAnimationFrame(this.reqRef);
   }
-
-  // handleTabChange = key => {
-  //   this.setState({
-  //     currentTabKey: key,
-  //   });
-  // };
-
-  handleRangePickerChange = rangePickerValue => {
-    const { dispatch } = this.props;
-    this.setState({
-      rangePickerValue,
-    });
-
-    dispatch({
-      type: 'chart/fetchSalesData',
-    });
-  };
-
-  selectDate = type => {
-    const { dispatch } = this.props;
-    this.setState({
-      rangePickerValue: getTimeDistance(type),
-    });
-
-    dispatch({
-      type: 'chart/fetchSalesData',
-    });
-  };
-
-  isActive = type => {
-    const { rangePickerValue } = this.state;
-    const value = getTimeDistance(type);
-    if (!rangePickerValue[0] || !rangePickerValue[1]) {
-      return '';
-    }
-    if (
-      rangePickerValue[0].isSame(value[0], 'day') &&
-      rangePickerValue[1].isSame(value[1], 'day')
-    ) {
-      return styles.currentDate;
-    }
-    return '';
-  };
 
   renderAdvancedForm = () => {
     const dateFormat = 'YYYY/MM/DD';
@@ -137,41 +91,25 @@ class Analysis extends Component {
     );
   };
 
+  handleSearch = e => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const values = {
+        ...fieldsValue,
+      };
+      dispatch({
+        type: 'business/topData',
+        payload: values,
+      });
+    });
+  };
+
   render() {
-    const { rangePickerValue, noType } = this.state;
-    const { chart, loading } = this.props;
-    const {
-      visitData,
-      visitData2,
-      salesData,
-      searchData,
-      offlineData,
-      offlineChartData,
-      salesTypeData,
-      salesTypeDataOnline,
-      salesTypeDataOffline,
-    } = chart;
-    let salesPieData;
-    if (noType === 'all') {
-      salesPieData = salesTypeData;
-    } else {
-      salesPieData = noType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
-    }
-    const menu = (
-      <Menu>
-        <Menu.Item>操作一</Menu.Item>
-        <Menu.Item>操作二</Menu.Item>
-      </Menu>
-    );
-
-    const dropdownGroup = (
-      <span className={styles.iconGroup}>
-        <Dropdown overlay={menu} placement="bottomRight">
-          <Icon type="ellipsis" />
-        </Dropdown>
-      </span>
-    );
-
+    const { business, loading } = this.props;
+    const { topData } = business;
+    console.log(topData, 'topData');
     const optionText = {
       row: ['挂号平台数', '挂号用户数', '挂号数', '总收入'],
       line: ['挂号走势图(30天)', '挂号订单数'],
@@ -186,41 +124,27 @@ class Analysis extends Component {
 
     return (
       <PageHeaderWrapper
-        // loading={currentUserLoading}
+        loading={loading}
         content={this.renderAdvancedForm()}
         // extraContent={extraContent}
       >
         <GridContent>
           <Suspense fallback={<PageLoading />}>
-            <IntroduceRow loading={loading} visitData={visitData} option={optionText.row} />
+            <IntroduceRow loading={loading} visitData={topData} option={optionText.row} />
           </Suspense>
           <Suspense fallback={null}>
-            <Aline loading={loading} dataSource={offlineChartData} option={optionText.line} />
+            <Aline loading={loading} dataSource={[]} option={optionText.line} />
           </Suspense>
           <div className={styles.twoColLayout}>
             <Row gutter={24}>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Apie loading={loading} dataSource={offlineData} option={optionText.signP} />
+                  <Apie loading={loading} dataSource={[]} option={optionText.signP} />
                 </Suspense>
               </Col>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={offlineData} option={optionText.quitP} />
-                </Suspense>
-              </Col>
-            </Row>
-          </div>
-          <div className={styles.twoColLayout}>
-            <Row gutter={24}>
-              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-                <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={offlineData} option={optionText.payN} />
-                </Suspense>
-              </Col>
-              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-                <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={offlineData} option={optionText.payT} />
+                  <Abar loading={loading} dataSource={[]} option={optionText.quitP} />
                 </Suspense>
               </Col>
             </Row>
@@ -229,12 +153,12 @@ class Analysis extends Component {
             <Row gutter={24}>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={offlineData} option={optionText.weekS} />
+                  <Abar loading={loading} dataSource={[]} option={optionText.payN} />
                 </Suspense>
               </Col>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={offlineData} option={optionText.weekQ} />
+                  <Abar loading={loading} dataSource={[]} option={optionText.payT} />
                 </Suspense>
               </Col>
             </Row>
@@ -243,7 +167,21 @@ class Analysis extends Component {
             <Row gutter={24}>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={offlineData} option={optionText.weekP} />
+                  <Abar loading={loading} dataSource={[]} option={optionText.weekS} />
+                </Suspense>
+              </Col>
+              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Suspense fallback={null}>
+                  <Abar loading={loading} dataSource={[]} option={optionText.weekQ} />
+                </Suspense>
+              </Col>
+            </Row>
+          </div>
+          <div className={styles.twoColLayout}>
+            <Row gutter={24}>
+              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Suspense fallback={null}>
+                  <Abar loading={loading} dataSource={[]} option={optionText.weekP} />
                 </Suspense>
               </Col>
             </Row>

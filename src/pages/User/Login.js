@@ -8,9 +8,8 @@ import styles from './Login.less';
 
 const { Tab, UserName, Password, Submit } = Login;
 
-@connect(({ login, loading, global }) => ({
+@connect(({ login, loading }) => ({
   login,
-  global,
   submitting: loading.effects['login/login'],
 }))
 class LoginPage extends Component {
@@ -19,24 +18,12 @@ class LoginPage extends Component {
     autoLogin: true,
   };
 
-  componentDidMount() {
-    const { dispatch } = this.props;
-    window.addEventListener('resize', () => {
-      const tableHeight = document.documentElement.clientHeight;
-      dispatch({
-        type: 'global/saveClientHeight',
-        payload: tableHeight,
-      });
-    });
-  }
-
   onTabChange = type => {
     this.setState({ type });
   };
 
   handleSubmit = (err, values) => {
     const { type } = this.state;
-    console.log('------>', type);
     if (!err) {
       const { dispatch } = this.props;
       dispatch({

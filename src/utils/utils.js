@@ -192,3 +192,15 @@ export const importCDN = (url, name) =>
     };
     document.head.appendChild(dom);
   });
+
+// export const saveClientHeight = () => {
+//   // eslint-disable-next-line no-var
+//   var tableHeight = 0;
+//   console.log(window, 'window-----');
+//   window.addEventListener('resize', () => {
+//     tableHeight = document.documentElement.clientHeight;
+//     console.log(this, 'this-----');
+//   });
+//   console.log(tableHeight, 'tableHeightSet');
+//   return tableHeight;
+// };

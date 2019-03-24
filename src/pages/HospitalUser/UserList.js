@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 /* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
@@ -9,7 +10,7 @@ import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import confirmPopCon from './confirmPopCon';
 import UserNoModal from './UserNoModal';
-
+import { saveClientHeight } from '../../utils/utils';
 import styles from './UserList.less';
 
 const FormItem = Form.Item;
@@ -318,7 +319,7 @@ class UserList extends PureComponent {
       global: { clientHeight },
     } = this.props;
     const { selectedRows, showStatus } = this.state;
-    console.log(clientHeight, '---------->');
+    // console.log(clientHeight, 'clientHeight');
     return (
       // <PageHeaderWrapper title={null}>
 
@@ -334,7 +335,7 @@ class UserList extends PureComponent {
           ) : null}
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            scroll={{ y: 240 }}
+            scroll={{ y: 200 }}
             selectedRows={selectedRows}
             loading={loading}
             data={data}

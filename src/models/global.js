@@ -86,13 +86,20 @@ export default {
         notices: state.notices.filter(item => item.type !== payload),
       };
     },
-    saveClientHeight(state, { payload }) {
-      console.log('clientHeight', payload);
-      return {
-        ...state,
-        clientHeight: payload,
-      };
-    },
+    // saveClientHeight(state) {
+    //   // eslint-disable-next-line no-var
+    //   var tableHeight = document.documentElement.clientHeight;
+    //   console.log(window, 'window-----');
+    //   window.addEventListener('resize', () => {
+    //     tableHeight = document.documentElement.clientHeight;
+    //     console.log(this, 'this-----');
+    //   });
+    //   console.log(tableHeight, 'tableHeightSet');
+    //   return {
+    //     ...state,
+    //     clientHeight: tableHeight,
+    //   };
+    // },
   },
 
   subscriptions: {
