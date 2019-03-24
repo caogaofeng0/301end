@@ -316,8 +316,8 @@ export default [
                 component: './Info/Doctor',
               },
               {
-                path: '/info/projects',
-                component: './Info/Projects',
+                path: '/info',
+                component: './Info/depart',
               },
             ],
           },

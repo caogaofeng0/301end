@@ -1,14 +1,12 @@
+/* eslint-disable react/no-unused-state */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import classNames from 'classnames';
 import moment from 'moment';
 import router from 'umi/router';
-import { Row, Col, Card, Form, Input, Button, Divider, DatePicker, Select, Icon } from 'antd';
+import { Row, Col, Card, Form, Button, Divider, Select } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import confirmPopCon from './confirmPopCon';
-import UserNoModal from './UserNoModal';
-
 import styles from './TableList.less';
 
 const FormItem = Form.Item;
@@ -20,57 +18,39 @@ const { Option } = Select;
   loading: loading.models.rule,
 }))
 @Form.create()
-class TableList extends PureComponent {
+class BindUser extends PureComponent {
   state = {
     expandForm: false,
     selectedRows: [],
     formValues: {},
-    showStatus: false,
   };
 
   columns = [
     {
-      title: 'id',
+      title: '门诊号',
       dataIndex: 'name',
       render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
-      title: '用户姓名',
+      title: '与用户关系',
       dataIndex: 'owner',
     },
     {
-      title: '身份证号',
+      title: '绑定时间',
       dataIndex: 'updatedAt',
       render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
-      title: '电话号码',
+      title: '医学中心名称',
       dataIndex: 'createdAt',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'callNo',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      render: val => (
-        <span className={classNames({ [styles.status]: val !== 0 })}>
-          {val === 0 ? '正常' : '锁定'}
-        </span>
-      ),
     },
     {
       title: '操作',
       render: (text, record) => (
         <Fragment>
-          <a onClick={() => this.unbind(text, record)}>绑定的患者</a>
+          <a onClick={() => this.unbind(text, record)}>解除绑定</a>
           <Divider type="vertical" />
-          <a onClick={() => this.noHistory(text, record)}>用户挂号记录</a>
-          <Divider type="vertical" />
-          <a onClick={() => this.toggleStatus(text, record)}>
-            {record && record.status === 0 ? '锁定' : '恢复'}
-          </a>
+          <a onClick={() => this.noHistory(text, record)}>患者挂号记录</a>
         </Fragment>
       ),
     },
@@ -82,29 +62,6 @@ class TableList extends PureComponent {
       type: 'rule/fetch',
     });
   }
-
-  /**
-   * 切换状态
-   */
-  toggleStatus = (text, record) => {
-    const { status } = record;
-    const name = status === 0 ? '锁定' : '恢复';
-    const params = {
-      title: `你正在进行用户${name}操作`,
-      content: `用户${name}后，${name === '锁定' ? '将不可使用' : '将恢复正常使用'},`,
-      askSure: `你还要${name}吗？`,
-      okText: `${name}`,
-    };
-    confirmPopCon(params, record, this.handleStatusChange);
-  };
-
-  handleStatusChange = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'rule/listStatus',
-    });
-    // console.log(record);
-  };
 
   /**
    * 解绑
@@ -217,36 +174,48 @@ class TableList extends PureComponent {
   };
 
   renderAdvancedForm() {
-    const dateFormat = 'YYYY/MM/DD';
-    const { expandForm } = this.state;
     const {
       form: { getFieldDecorator },
     } = this.props;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24} style={{ height: 56 }}>
+          <Col md={8} sm={24}>
             <FormItem label={null}>
-              {getFieldDecorator('time')(
-                <DatePicker.RangePicker
-                  initialValue={[
-                    moment('2015/01/01', dateFormat),
-                    moment('2015/01/01', dateFormat),
-                  ]}
-                  format={dateFormat}
-                />
+              {getFieldDecorator('center')(
+                <Select placeholder="请选择医学中心">
+                  <Option value="jack">Jack</Option>
+                  <Option value="lucy">Lucy</Option>
+                  <Option value="tom">Tom</Option>
+                </Select>
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('platform')(
-                <Select placeholder="请选择第三方平台id" initialValue="jack">
+                <Select placeholder="请选择第三方平台id">
                   <Option value="jack">Jack</Option>
                   <Option value="lucy">Lucy</Option>
                   <Option value="tom">Tom</Option>
                 </Select>
               )}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24} style={{ height: 56 }}>
+            <FormItem label={null}>
+              {getFieldDecorator('status')(
+                <Select placeholder="请选择患者状态">
+                  <Option value="jack">Jack</Option>
+                  <Option value="lucy">Lucy</Option>
+                  <Option value="tom">Tom</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24} style={{ height: 56 }}>
+            <FormItem label={null}>
+              {getFieldDecorator('num')(<input placeholder="输入门诊号搜索" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -258,40 +227,9 @@ class TableList extends PureComponent {
                 <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
-                <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                  {!expandForm ? '展开' : '收起'}
-                  {!expandForm ? <Icon type="down" /> : <Icon type="up" />}
-                </a>
               </div>
             </div>
           </Col>
-          {expandForm ? (
-            <Col md={8} sm={24}>
-              <FormItem label={null}>
-                {getFieldDecorator('status')(
-                  <Select placeholder="请选择状态" initialValue="jack">
-                    <Option value="jack">Jack</Option>
-                    <Option value="lucy">Lucy</Option>
-                    <Option value="tom">Tom</Option>
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-          ) : null}
-          {expandForm ? (
-            <Col md={8} sm={24}>
-              <FormItem label={null}>
-                {getFieldDecorator('name')(<Input placeholder="输入姓名搜索" />)}
-              </FormItem>
-            </Col>
-          ) : null}
-          {expandForm ? (
-            <Col md={8} sm={24}>
-              <FormItem label={null}>
-                {getFieldDecorator('id')(<Input placeholder="输入身份证号搜索" />)}
-              </FormItem>
-            </Col>
-          ) : null}
         </Row>
       </Form>
     );
@@ -302,19 +240,11 @@ class TableList extends PureComponent {
       rule: { data },
       loading,
     } = this.props;
-    const { selectedRows, showStatus } = this.state;
+    const { selectedRows } = this.state;
     return (
       <PageHeaderWrapper title={null}>
         <Card bordered={false}>
           <div className={styles.tableList}>
-            {showStatus ? (
-              <UserNoModal
-                showStatus={showStatus}
-                hideNoModal={this.hideNoModal}
-                confirmLoading={false}
-                handleNoModal={this.handleNoModal}
-              />
-            ) : null}
             <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
             <StandardTable
               selectedRows={selectedRows}
@@ -331,4 +261,4 @@ class TableList extends PureComponent {
   }
 }
 
-export default TableList;
+export default BindUser;

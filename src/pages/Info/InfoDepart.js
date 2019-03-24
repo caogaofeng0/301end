@@ -44,14 +44,11 @@ class InfoDepart extends React.Component {
     const { match } = this.props;
     console.log(key, match, 'doctor--------->');
     switch (key) {
-      case 'articles':
-        router.push(`${match.url}/articles`);
+      case 'depart':
+        router.push(`${match.url}/depart`);
         break;
       case 'doctor':
         router.push(`${match.url}/doctor`);
-        break;
-      case 'projects':
-        router.push(`${match.url}/projects`);
         break;
       default:
         break;
@@ -114,20 +111,12 @@ class InfoDepart extends React.Component {
 
     const operationTabList = [
       {
-        key: 'articles',
+        key: 'depart',
         tab: <span>科室信息</span>,
       },
       {
         key: 'doctor',
         tab: <span>科室医生</span>,
-      },
-      {
-        key: 'projects',
-        tab: (
-          <span>
-            项目 <span style={{ fontSize: 14 }}>(8)</span>
-          </span>
-        ),
       },
     ];
     console.log(location.pathname, 'location.pathname');

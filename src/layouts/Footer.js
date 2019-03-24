@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { Fragment } from 'react';
 import { Layout, Icon } from 'antd';
 import GlobalFooter from '@/components/GlobalFooter';
@@ -5,7 +6,7 @@ import GlobalFooter from '@/components/GlobalFooter';
 const { Footer } = Layout;
 const FooterView = () => (
   <Footer style={{ padding: 0 }}>
-    <GlobalFooter
+    {/* <GlobalFooter
       links={[
         {
           key: 'Pro 首页',
@@ -28,10 +29,10 @@ const FooterView = () => (
       ]}
       copyright={
         <Fragment>
-          {/* Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品 */}
+          Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
         </Fragment>
       }
-    />
+    /> */}
   </Footer>
 );
 export default FooterView;

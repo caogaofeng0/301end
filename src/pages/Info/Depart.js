@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { List, Icon, Tag } from 'antd';
 import { connect } from 'dva';
 import ArticleListContent from '@/components/ArticleListContent';
-import styles from './Articles.less';
+import styles from './Depart.less';
 
 @connect(({ list }) => ({
   list,

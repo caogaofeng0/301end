@@ -7,3 +7,7 @@ export async function changeStatus() {
 export async function queryActivities() {
   return request('/api/activities');
 }
+
+export async function userNoHistory() {
+  return request('/api/user/no/history');
+}
