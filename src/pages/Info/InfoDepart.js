@@ -44,8 +44,8 @@ class InfoDepart extends React.Component {
     const { match } = this.props;
     console.log(key, match, 'doctor--------->');
     switch (key) {
-      case 'depart':
-        router.push(`${match.url}/depart`);
+      case 'info':
+        router.push(`${match.url}`);
         break;
       case 'doctor':
         router.push(`${match.url}/doctor`);
@@ -111,7 +111,7 @@ class InfoDepart extends React.Component {
 
     const operationTabList = [
       {
-        key: 'depart',
+        key: 'info',
         tab: <span>科室信息</span>,
       },
       {
@@ -119,7 +119,7 @@ class InfoDepart extends React.Component {
         tab: <span>科室医生</span>,
       },
     ];
-    console.log(location.pathname, 'location.pathname');
+    console.log(location.pathname, match.path, 'location.pathname');
 
     return (
       <GridContent className={styles.userCenter}>
@@ -149,6 +149,7 @@ class InfoDepart extends React.Component {
               className={styles.tabsCard}
               bordered={false}
               tabList={operationTabList}
+              defaultActiveKey="info"
               activeTabKey={location.pathname.replace(`${match.path}/`, '')}
               onTabChange={this.onTabChange}
               loading={listLoading}

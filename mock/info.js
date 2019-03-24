@@ -335,4 +335,22 @@ export default {
   'POST /api/fake_list': postFakeList,
   'GET /api/captcha': getFakeCaptcha,
   'POST /api/doctorList': getFakeList,
+  'GET /api/depart/Info': mockjs.mock({
+    code: 200,
+    'list|10': [
+      {
+        'id|+1': 1,
+        title: '个性化服务',
+        content:
+          '海纳百川，有容乃大，海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大',
+        aboutBig: '大壮，小曾',
+        group: '蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED',
+        address: '西湖区工专路 77 号',
+        phone: '0752-268888888',
+      },
+    ],
+    abstract: '解放军总医院',
+    leader: '小明',
+    pagination: { total: 46, pageSize: 10, current: 1 },
+  }),
 };

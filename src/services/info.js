@@ -10,9 +10,10 @@ export async function getDoctorList(params) {
   });
 }
 
-export async function fakeChartData() {
-  return request('/api/fake_chart_data');
+export async function departInfo() {
+  return request('/api/depart/Info');
 }
+
 // export async function removeRule(params) {
 //   return request('/api/rule', {
 //     method: 'POST',

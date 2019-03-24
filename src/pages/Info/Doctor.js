@@ -194,7 +194,7 @@ class DoctorList extends PureComponent {
     // console.log(data, '---------list----->');
     const { selectedRows, visibleStatus, confirmLoading, ModalText } = this.state;
     return (
-      <PageHeaderWrapper title={null}>
+      <Fragment>
         <EditDoc
           visibleStatus={visibleStatus}
           confirmLoading={confirmLoading}
@@ -217,7 +217,7 @@ class DoctorList extends PureComponent {
             />
           </div>
         </Card>
-      </PageHeaderWrapper>
+      </Fragment>
     );
   }
 }
