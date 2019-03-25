@@ -247,7 +247,7 @@ class InfoDepart extends React.Component {
               className={styles.tabsCard}
               bordered={false}
               tabList={operationTabList}
-              defaultActiveKey="info"
+              defaultactivekey="info"
               activeTabKey={location.pathname.replace(`${match.path}/`, '')}
               onTabChange={this.onTabChange}
               loading={listLoading}
