@@ -59,16 +59,6 @@ export default [
               },
             ],
           },
-          // {
-          //   path: '/hospitalUser/bindUser',
-          //   name: 'bind',
-          //   component: './HospitalUser/BindUser',
-          // },
-          // {
-          //   path: '/hospitalUser/bindHistory',
-          //   name: 'history',
-          //   component: './HospitalUser/BindUserHistory',
-          // },
         ],
       },
 

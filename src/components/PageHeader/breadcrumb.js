@@ -83,8 +83,11 @@ export default class BreadcrumbView extends PureComponent {
     // Convert the url to an array
     const pathSnippets = urlToList(routerLocation.pathname);
     // Loop data mosaic routing
+    // console.log(pathSnippets, "pathSnippetsOne")s
     const extraBreadcrumbItems = pathSnippets.map((url, index) => {
       const currentBreadcrumb = getBreadcrumb(breadcrumbNameMap, url);
+      // console.log(currentBreadcrumb, "pathSnippetseMap")
+
       if (currentBreadcrumb.inherited) {
         return null;
       }

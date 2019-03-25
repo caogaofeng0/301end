@@ -54,15 +54,9 @@ class BasicLayout extends React.Component {
     var tableHeight = document.documentElement.clientHeight;
     window.addEventListener('resize', () => {
       tableHeight = document.documentElement.clientHeight;
-      dispatch({
-        type: 'global/saveClientHeight',
-        payload: tableHeight,
-      });
+      this.getClientHeight(tableHeight);
     });
-    dispatch({
-      type: 'global/saveClientHeight',
-      payload: tableHeight,
-    });
+    this.getClientHeight(tableHeight);
     dispatch({
       type: 'user/fetchCurrent',
     });
@@ -74,6 +68,14 @@ class BasicLayout extends React.Component {
       payload: { routes, authority },
     });
   }
+
+  getClientHeight = v => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'global/saveClientHeight',
+      payload: v,
+    });
+  };
 
   getContext() {
     const { location, breadcrumbNameMap } = this.props;
