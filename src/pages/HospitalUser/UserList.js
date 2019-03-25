@@ -319,7 +319,7 @@ class UserList extends PureComponent {
       global: { clientHeight },
     } = this.props;
     const { selectedRows, showStatus } = this.state;
-    // console.log(clientHeight, 'clientHeight');
+    console.log(clientHeight, 'clientHeight');
     return (
       // <PageHeaderWrapper title={null}>
 

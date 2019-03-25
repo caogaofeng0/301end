@@ -2,15 +2,19 @@ import React, { Component, Fragment } from 'react';
 import { Card, Row, Col } from 'antd';
 import { connect } from 'dva';
 import StandardTable from '@/components/StandardTable';
+import styles from './Depart.less';
 
-@connect(({ info }) => ({
+@connect(({ info, global }) => ({
   info,
+  global,
 }))
 class Depart extends Component {
   columns = [
     {
       title: '序号',
       dataIndex: 'id',
+      width: 100,
+      fixed: 'left',
       render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
@@ -24,6 +28,8 @@ class Depart extends Component {
     {
       title: '相关专家',
       dataIndex: 'aboutBig',
+      width: 100,
+      fixed: 'right',
     },
     {
       title: '操作',
@@ -32,6 +38,8 @@ class Depart extends Component {
           <a onClick={() => this.handDoctorInfo(text, record)}>删除</a>
         </Fragment>
       ),
+      width: 100,
+      fixed: 'right',
     },
   ];
 
@@ -64,20 +72,28 @@ class Depart extends Component {
   render() {
     const {
       info: { depart },
+      global: { clientHeight },
     } = this.props;
-    console.log('进入渲染');
     const data = { list: depart.list, pagination: depart.pagination };
     return (
       <Fragment>
-        <Card style={{ width: '100%' }}>
+        <Card bordered={false} bodyStyle={{ padding: 0 }} className={styles.departBody}>
           <Row>
-            <Col>学科简介：{depart.abstract}</Col>
+            <Col>
+              <span>学科简介：</span>
+              {depart.abstract}
+            </Col>
           </Row>
           <Row>
-            <Col>学科带头人：{depart.leader}</Col>
+            <Col>
+              <span>学科带头人：</span>
+              {depart.leader}
+            </Col>
           </Row>
           <Row>
-            <Col>门诊专科特色技术:</Col>
+            <Col>
+              <span>门诊专科特色技术:</span>
+            </Col>
             <Col>
               <StandardTable
                 rowKey={record => record.id}
@@ -87,6 +103,7 @@ class Depart extends Component {
                 columns={this.columns}
                 rowSelection={null}
                 onChange={this.handleStandardTableChange}
+                scroll={{ x: '100%', y: clientHeight - 400 }}
               />
             </Col>
           </Row>

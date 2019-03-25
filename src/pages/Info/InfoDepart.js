@@ -4,16 +4,18 @@ import React from 'react';
 import { connect } from 'dva';
 import Link from 'umi/link';
 import router from 'umi/router';
-import { Card, Row, Col, Icon, Avatar, Tag, Divider, Spin, Input, Form, Radio } from 'antd';
+import { Card, Row, Col, Icon, Avatar, Tag, Divider, Spin, Input, Form, Radio, Menu } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from './InfoDepart.less';
 
 const FormItem = Form.Item;
-@connect(({ loading, user, project }) => ({
+// const SubMenu = Menu.SubMenu;
+@connect(({ loading, user, project, global }) => ({
   listLoading: loading.effects['list/fetch'],
   currentUser: user.currentUser,
   currentUserLoading: loading.effects['user/fetchCurrent'],
   project,
+  global,
   projectLoading: loading.effects['project/fetchNotice'],
 }))
 @Form.create()
@@ -95,6 +97,10 @@ class InfoDepart extends React.Component {
     });
   };
 
+  handleClick = e => {
+    console.log('click ', e);
+  };
+
   render() {
     const { newTags, inputVisible, inputValue } = this.state;
     const {
@@ -107,6 +113,7 @@ class InfoDepart extends React.Component {
       location,
       children,
       form: { getFieldDecorator, getFieldValue },
+      global: { clientHeight },
     } = this.props;
 
     const operationTabList = [
@@ -119,28 +126,119 @@ class InfoDepart extends React.Component {
         tab: <span>科室医生</span>,
       },
     ];
-    console.log(location.pathname, match.path, 'location.pathname');
-
+    console.log(clientHeight, clientHeight - 70, 'location.pathname');
     return (
       <GridContent className={styles.userCenter}>
         <Row gutter={24}>
           <Col lg={7} md={24}>
-            <Card bordered={false} style={{ marginBottom: 24 }} loading={currentUserLoading}>
-              <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
+            <Card
+              bordered={false}
+              style={{ marginBottom: 24, height: clientHeight - 70 }}
+              loading={currentUserLoading}
+            >
+              <Form
+                onSubmit={this.handleSubmit}
+                hideRequiredMark
+                style={{ marginTop: 8, height: '10%' }}
+              >
                 <FormItem>
                   {getFieldDecorator('name')(<Input placeholder="输入关键字搜索" />)}
                 </FormItem>
-                <div className={styles.InfoDepartList} />
-                {getFieldDecorator('depart', {
-                  initialValue: 'all',
-                })(
-                  <Radio.Group>
-                    <Radio.Button value="all">全部</Radio.Button>
-                    <Radio.Button value="in">内科</Radio.Button>
-                    <Radio.Button value="out">外科</Radio.Button>
-                    <Radio.Button value="other">其他</Radio.Button>
-                  </Radio.Group>
-                )}
+                <div className={styles.infoItem}>
+                  <Menu
+                    theme="light"
+                    mode="inline"
+                    defaultSelectedKeys={['1']}
+                    onClick={this.handleClick}
+                    style={{ height: clientHeight - 260 }}
+                  >
+                    <Menu.Item key="1">
+                      <Icon type="user" />
+                      <span>nav 1</span>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="4">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="5">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="6">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="3">
+                      <Icon type="upload" />
+                      <span>nav 3</span>
+                    </Menu.Item>
+                    <Menu.Item key="21">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="22">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="12">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="221">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="224">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+
+                    <Menu.Item key="21422">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="21522">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="22122">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="21122">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="21622">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="27122">
+                      <span>科室：小儿骨科/</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                    <Menu.Item key="21262">
+                      <span>科室：小儿骨科/1234567890</span>
+                      <span>输入码：</span>
+                    </Menu.Item>
+                  </Menu>
+                </div>
+                <div className={styles.departButtton}>
+                  {getFieldDecorator('depart', {
+                    initialValue: 'all',
+                  })(
+                    <Radio.Group>
+                      <Radio.Button value="all">全部</Radio.Button>
+                      <Radio.Button value="in">内科</Radio.Button>
+                      <Radio.Button value="out">外科</Radio.Button>
+                      <Radio.Button value="other">其他</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </div>
               </Form>
             </Card>
           </Col>
