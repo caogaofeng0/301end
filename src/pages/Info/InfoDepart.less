@@ -106,17 +106,22 @@
   left: 26px;
 }
 .infoItem {
-  // height: calc(100% - 1000px);
-  // padding-bottom: 100px;
   overflow-y: scroll;
   .ant-menu-inline {
     border-right: none;
   }
-
-  .ant-menu {
-    border-right: none;
-    :global {
+  :global {
+    .ant-menu {
+      border-right: none;
       .ant-menu-item {
+        display: flex;
+        flex-direction: column;
+        height: 45px;
+        margin: 0;
+        padding-top: 2px;
+        padding-bottom: 7px;
+        padding-left: 24px;
+        line-height: initial;
         border-bottom: 1px solid #e8e8e8;
         &::after {
           border-right: none;

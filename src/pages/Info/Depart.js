@@ -1,14 +1,21 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component, Fragment } from 'react';
 import { Card, Row, Col } from 'antd';
 import { connect } from 'dva';
 import StandardTable from '@/components/StandardTable';
 import styles from './Depart.less';
 
-@connect(({ info, global }) => ({
+@connect(({ info, global, loading }) => ({
   info,
   global,
+  loading: loading.effects['info/fetchDepart'],
 }))
 class Depart extends Component {
+  state = {
+    currentPage: 1,
+    pageSize: 10,
+  };
+
   columns = [
     {
       title: '序号',
@@ -44,35 +51,31 @@ class Depart extends Component {
   ];
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'info/fetchDepart',
-    });
+    this.getDepartDetails();
   }
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
+  getDepartDetails = () => {
     const { dispatch } = this.props;
-    const { formValues } = this.state;
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      // ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
     dispatch({
       type: 'info/fetchDepart',
-      payload: params,
     });
+  };
+
+  handleStandardTableChange = pagination => {
+    this.setState({
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+    setTimeout(() => {
+      this.getDepartDetails();
+    }, 100);
   };
 
   render() {
     const {
       info: { depart },
       global: { clientHeight },
+      loading,
     } = this.props;
     const data = { list: depart.list, pagination: depart.pagination };
     return (
@@ -96,6 +99,7 @@ class Depart extends Component {
             </Col>
             <Col>
               <StandardTable
+                loading={loading}
                 rowKey={record => record.id}
                 selectedRows={[]}
                 //  loading={loading}

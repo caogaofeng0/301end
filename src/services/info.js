@@ -14,6 +14,15 @@ export async function departInfo() {
   return request('/api/depart/Info');
 }
 
+export async function departInfoList(params) {
+  return request('/api/depart/Info/list', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
 // export async function removeRule(params) {
 //   return request('/api/rule', {
 //     method: 'POST',

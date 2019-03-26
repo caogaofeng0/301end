@@ -1,4 +1,4 @@
-import { getDoctorList, departInfo } from '@/services/info';
+import { getDoctorList, departInfo, departInfoList } from '@/services/info';
 
 export default {
   namespace: 'info',
@@ -13,6 +13,7 @@ export default {
       abstract: '',
       leader: '',
     },
+    departList: [],
   },
 
   effects: {
@@ -30,6 +31,13 @@ export default {
         payload: response,
       });
     },
+    *fetchDepartList({ payload }, { call, put }) {
+      const response = yield call(departInfoList, payload);
+      yield put({
+        type: 'saveDepartList',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -40,10 +48,15 @@ export default {
       };
     },
     saveDepart(state, action) {
-      console.log(action, '返回数据');
       return {
         ...state,
         depart: action.payload,
+      };
+    },
+    saveDepartList(state, action) {
+      return {
+        ...state,
+        departList: action.payload,
       };
     },
   },

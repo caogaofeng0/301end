@@ -33,6 +33,7 @@ class DoctorList extends PureComponent {
   columns = [
     {
       title: '医生姓名',
+      width: 100,
       dataIndex: 'owner',
       render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
@@ -46,6 +47,7 @@ class DoctorList extends PureComponent {
     },
     {
       title: '操作',
+      width: 100,
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.handDoctorInfo(text, record)}>编辑</a>

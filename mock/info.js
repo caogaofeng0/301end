@@ -78,14 +78,14 @@ function fakeList(count) {
       createdAt: new Date(new Date().getTime() - 1000 * 60 * 60 * 2 * i),
       subDescription: desc[i % 5],
       description:
-        '在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面和组件，这些类似的组件会被抽离成一套标准规范。',
+        '医院拥有数字血管造影机、PET-MR、PET-CT、回旋加速器、计算机断层治疗系统、高压氧舱、机器人手术系统、磁导航介入系统、术中CT及术中磁共振等先进诊疗设备4万多台套。设置165个临床、医技科室，233个护理单元，拥有8个国家重点学科、1个国家重点实验室、20个省部级及全军重点实验室、33个全军医学专科中心和研究所，形成了以综合诊疗为特色的13项专业优势。同时是全军重症监护示范基地和中华护理学会的培训基地。设有国际医学中心和健康医学中心，提供高端预防保健服务。医院年门急诊量490余万人，收容 19.8万人，手术近9万例。',
       activeUser: Math.ceil(Math.random() * 100000) + 100000,
       newUser: Math.ceil(Math.random() * 1000) + 1000,
       star: Math.ceil(Math.random() * 100) + 100,
       like: Math.ceil(Math.random() * 100) + 100,
       message: Math.ceil(Math.random() * 10) + 10,
       content:
-        '段落示意：蚂蚁金服设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态，提供跨越设计与开发的体验解决方案。蚂蚁金服设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态，提供跨越设计与开发的体验解决方案。',
+        '中国人民解放军总医院（301医院）创建于1953年，是集医疗、保健、教学、科研于一体的大型现代化综合性医院。医院是中央重要保健基地，承担军委、总部等多个体系单位、官兵的医疗保健和各军区、军兵种转诊、后送的疑难病诊治任务。医院同时又是解放军医学院，以研究生教育为主，是全军唯一一所医院办学单位',
       members: [
         {
           avatar: 'https://gw.alipayobjects.com/zos/rmsportal/ZiESqWwCXBRQoaPONSJe.png',
@@ -345,13 +345,25 @@ export default {
         content:
           '海纳百川，有容乃大，海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大海纳百川，有容乃大',
         aboutBig: '大壮，小曾',
-        group: '蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED',
-        address: '西湖区工专路 77 号',
+        group: 'UED',
+        address: '地铁10号线',
         phone: '0752-268888888',
       },
     ],
     abstract: '解放军总医院',
     leader: '小明',
     pagination: { total: 46, pageSize: 10, current: 1 },
+  }),
+  'POST /api/depart/Info/list': mockjs.mock({
+    code: 200,
+    'list|10': [
+      {
+        'id|+1': 1,
+        depart: '小儿骨科',
+        departCode: 'XEGK',
+        address: '西湖区工专路 77 号',
+        phone: '0752-268888888',
+      },
+    ],
   }),
 };

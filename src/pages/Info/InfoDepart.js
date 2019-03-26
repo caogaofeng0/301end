@@ -1,52 +1,37 @@
-/* eslint-disable no-console */
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { connect } from 'dva';
-import Link from 'umi/link';
 import router from 'umi/router';
-import { Card, Row, Col, Icon, Avatar, Tag, Divider, Spin, Input, Form, Radio, Menu } from 'antd';
+import { Card, Row, Col, Input, Form, Radio, Menu } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from './InfoDepart.less';
 
 const FormItem = Form.Item;
-// const SubMenu = Menu.SubMenu;
-@connect(({ loading, user, project, global }) => ({
-  listLoading: loading.effects['list/fetch'],
-  currentUser: user.currentUser,
-  currentUserLoading: loading.effects['user/fetchCurrent'],
-  project,
+@connect(({ loading, info, global }) => ({
   global,
-  projectLoading: loading.effects['project/fetchNotice'],
+  info,
+  loading: loading.effects['info/fetchDepartList'],
 }))
 @Form.create()
 class InfoDepart extends React.Component {
-  state = {
-    newTags: [],
-    inputVisible: false,
-    inputValue: '',
-  };
+  state = {};
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'user/fetchCurrent',
-    });
-    dispatch({
-      type: 'list/fetch',
-      payload: {
-        count: 8,
-      },
-    });
-    dispatch({
-      type: 'project/fetchNotice',
-    });
+    this.getDepartList();
   }
+
+  getDepartList = v => {
+    // v 点击底部传入的值
+    const { dispatch, form } = this.props;
+    dispatch({
+      type: 'info/fetchDepartList',
+      payload: { ...form.getFieldsValue(), v },
+    });
+  };
 
   onTabChange = key => {
     const { match } = this.props;
-    console.log(key, match, 'doctor--------->');
     switch (key) {
-      case 'info':
+      case '/info':
         router.push(`${match.url}`);
         break;
       case 'doctor':
@@ -57,68 +42,49 @@ class InfoDepart extends React.Component {
     }
   };
 
-  showInput = () => {
-    this.setState({ inputVisible: true }, () => this.input.focus());
-  };
-
   saveInputRef = input => {
     this.input = input;
   };
 
-  handleInputChange = e => {
-    this.setState({ inputValue: e.target.value });
-  };
-
-  handleInputConfirm = () => {
-    const { state } = this;
-    const { inputValue } = state;
-    let { newTags } = state;
-    if (inputValue && newTags.filter(tag => tag.label === inputValue).length === 0) {
-      newTags = [...newTags, { key: `new-${newTags.length}`, label: inputValue }];
-    }
-    this.setState({
-      newTags,
-      inputVisible: false,
-      inputValue: '',
-    });
-  };
-
   handleSubmit = e => {
-    const { dispatch, form } = this.props;
+    const { form } = this.props;
     e.preventDefault();
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        console.log(values);
-        // dispatch({
-        //   type: 'form/submitRegularForm',
-        //   payload: values,
-        // });
-      }
+    form.validateFieldsAndScroll(err => {
+      if (err) return;
+      this.getDepartList();
     });
   };
 
   handleClick = e => {
     console.log('click ', e);
+    const { dispatch } = this.props;
+    // 调用详情
+    dispatch({
+      type: 'info/fetchDepart',
+    });
+    // this.getDepartList(depart)
+  };
+
+  getDepart = e => {
+    console.log('radio ', e.target.value);
+    const depart = e.target.value;
+    this.getDepartList(depart);
   };
 
   render() {
-    const { newTags, inputVisible, inputValue } = this.state;
     const {
-      listLoading,
-      currentUser,
-      currentUserLoading,
-      project: { notice },
-      projectLoading,
       match,
       location,
       children,
-      form: { getFieldDecorator, getFieldValue },
+      info: {
+        departList: { list },
+      },
       global: { clientHeight },
+      form: { getFieldDecorator },
     } = this.props;
-
     const operationTabList = [
       {
-        key: 'info',
+        key: '/info',
         tab: <span>科室信息</span>,
       },
       {
@@ -126,16 +92,12 @@ class InfoDepart extends React.Component {
         tab: <span>科室医生</span>,
       },
     ];
-    console.log(clientHeight, clientHeight - 70, 'location.pathname');
+    console.log(location.pathname.replace(`${match.path}/`, ''), 'location.');
     return (
       <GridContent className={styles.userCenter}>
         <Row gutter={24}>
           <Col lg={7} md={24}>
-            <Card
-              bordered={false}
-              style={{ marginBottom: 24, height: clientHeight - 70 }}
-              loading={currentUserLoading}
-            >
+            <Card bordered={false} style={{ marginBottom: 24, height: clientHeight - 70 }}>
               <Form
                 onSubmit={this.handleSubmit}
                 hideRequiredMark
@@ -148,90 +110,24 @@ class InfoDepart extends React.Component {
                   <Menu
                     theme="light"
                     mode="inline"
-                    defaultSelectedKeys={['1']}
+                    // defaultSelectedKeys={['1']}
                     onClick={this.handleClick}
                     style={{ height: clientHeight - 260 }}
                   >
-                    <Menu.Item key="1">
-                      <Icon type="user" />
-                      <span>nav 1</span>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="5">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="6">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                      <Icon type="upload" />
-                      <span>nav 3</span>
-                    </Menu.Item>
-                    <Menu.Item key="21">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="22">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="12">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="221">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="224">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-
-                    <Menu.Item key="21422">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="21522">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="22122">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="21122">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="21622">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="27122">
-                      <span>科室：小儿骨科/</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
-                    <Menu.Item key="21262">
-                      <span>科室：小儿骨科/1234567890</span>
-                      <span>输入码：</span>
-                    </Menu.Item>
+                    {list &&
+                      list.map(v => (
+                        <Menu.Item key={v.id}>
+                          <span>科室：{v.depart}</span>
+                          <span>输入码：{v.departCode}</span>
+                        </Menu.Item>
+                      ))}
                   </Menu>
                 </div>
                 <div className={styles.departButtton}>
                   {getFieldDecorator('depart', {
                     initialValue: 'all',
                   })(
-                    <Radio.Group>
+                    <Radio.Group onChange={this.getDepart}>
                       <Radio.Button value="all">全部</Radio.Button>
                       <Radio.Button value="in">内科</Radio.Button>
                       <Radio.Button value="out">外科</Radio.Button>
@@ -247,10 +143,9 @@ class InfoDepart extends React.Component {
               className={styles.tabsCard}
               bordered={false}
               tabList={operationTabList}
-              defaultactivekey="info"
+              defaultactivekey="/info"
               activeTabKey={location.pathname.replace(`${match.path}/`, '')}
               onTabChange={this.onTabChange}
-              loading={listLoading}
             >
               {children}
             </Card>
