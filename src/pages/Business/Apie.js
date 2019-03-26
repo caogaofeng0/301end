@@ -33,7 +33,7 @@ class Apie extends React.Component {
         formatter: '{a} <br/>{b} : {c} ({d}%)',
       },
       legend: {
-        orient: 'vertical',
+        // orient: 'vertical',
         left: 'left',
         data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
       },
@@ -64,7 +64,7 @@ class Apie extends React.Component {
   };
 
   render() {
-    const { loading, option } = this.props;
+    const { loading, option, dataSource } = this.props;
     return (
       <Card
         loading={loading}
@@ -73,7 +73,7 @@ class Apie extends React.Component {
         title={option[0]}
         style={{ marginTop: 24 }}
       >
-        <ReactEcharts option={this.getOption()} theme="macarons" style={{ height: 300 }} />
+        <ReactEcharts option={dataSource} theme="macarons" style={{ height: 300 }} />
       </Card>
     );
   }

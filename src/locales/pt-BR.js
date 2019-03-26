@@ -1,4 +1,3 @@
-import analysis from './pt-BR/analysis';
 import exception from './pt-BR/exception';
 import form from './pt-BR/form';
 import globalHeader from './pt-BR/globalHeader';
@@ -20,7 +19,6 @@ export default {
   'app.forms.basic.title': 'Basic form',
   'app.forms.basic.description':
     'Páginas de formulário são usadas para coletar e verificar as informações dos usuários e formulários básicos são comuns nos cenários onde existem alguns formatos de informações.',
-  ...analysis,
   ...exception,
   ...form,
   ...globalHeader,

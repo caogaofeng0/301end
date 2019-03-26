@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -9,10 +10,6 @@ import PageLoading from '@/components/PageLoading';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 const IntroduceRow = React.lazy(() => import('./IntroduceRow'));
-// const SalesCard = React.lazy(() => import('./SalesCard'));
-// const TopSearch = React.lazy(() => import('./TopSearch'));
-// const ProportionSales = React.lazy(() => import('./ProportionSales'));
-// const OfflineData = React.lazy(() => import('./OfflineData'));
 const Aline = React.lazy(() => import('./Aline'));
 const Apie = React.lazy(() => import('./Apie'));
 const Abar = React.lazy(() => import('./Abar'));
@@ -24,14 +21,15 @@ const FormItem = Form.Item;
 }))
 @Form.create()
 class Analysis extends Component {
-  state = {};
+  state = {
+    approver: '',
+    time: '',
+  };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    // const { dispatch } = this.props;
     this.reqRef = requestAnimationFrame(() => {
-      dispatch({
-        type: 'business/topData',
-      });
+      this.getFetch();
     });
   }
 
@@ -42,6 +40,28 @@ class Analysis extends Component {
     });
     cancelAnimationFrame(this.reqRef);
   }
+
+  getFetch = () => {
+    const { dispatch } = this.props;
+    // const { approver, time} = this.state
+    console.log('getFetch');
+    dispatch({
+      type: 'business/topData',
+      payload: this.state,
+    });
+    dispatch({
+      type: 'business/noTrendFetch',
+    });
+    dispatch({
+      type: 'business/noDayPlatform',
+    });
+    dispatch({
+      type: 'business/noDayPlatformQuit',
+    });
+    dispatch({
+      type: 'business/noDayPlatformTrend',
+    });
+  };
 
   renderAdvancedForm = () => {
     const dateFormat = 'YYYY/MM/DD';
@@ -93,22 +113,22 @@ class Analysis extends Component {
 
   handleSearch = e => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
+    const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      const values = {
+      // const values = {
+      //   ...fieldsValue,
+      // };
+      console.log({ ...fieldsValue });
+      this.setState({
         ...fieldsValue,
-      };
-      dispatch({
-        type: 'business/topData',
-        payload: values,
       });
+      this.getFetch();
     });
   };
 
   render() {
     const { business, loading } = this.props;
-    const { topData } = business;
     const optionText = {
       row: ['挂号平台数', '挂号用户数', '挂号数', '总收入'],
       line: ['挂号走势图(30天)', '挂号订单数'],
@@ -120,7 +140,7 @@ class Analysis extends Component {
       weekQ: ['退号平台分布走势图（近7天）'],
       weekP: ['各平台号类分布（近7天）'],
     };
-
+    const { topData, noTrend, noDayPlatform, noDayPlatformQuit, noDayPlatformTrend } = business;
     return (
       <PageHeaderWrapper
         loading={loading}
@@ -132,32 +152,22 @@ class Analysis extends Component {
             <IntroduceRow loading={loading} visitData={topData} option={optionText.row} />
           </Suspense>
           <Suspense fallback={null}>
-            <Aline loading={loading} dataSource={[]} option={optionText.line} />
+            <Aline loading={loading} dataSource={noTrend} option={optionText.line} />
           </Suspense>
           <div className={styles.twoColLayout}>
             <Row gutter={24}>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Apie loading={loading} dataSource={[]} option={optionText.signP} />
+                  <Apie loading={loading} dataSource={noDayPlatform} option={optionText.signP} />
                 </Suspense>
               </Col>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={[]} option={optionText.quitP} />
-                </Suspense>
-              </Col>
-            </Row>
-          </div>
-          <div className={styles.twoColLayout}>
-            <Row gutter={24}>
-              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-                <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={[]} option={optionText.payN} />
-                </Suspense>
-              </Col>
-              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-                <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={[]} option={optionText.payT} />
+                  <Abar
+                    loading={loading}
+                    dataSource={noDayPlatformQuit}
+                    option={optionText.quitP}
+                  />
                 </Suspense>
               </Col>
             </Row>
@@ -166,12 +176,12 @@ class Analysis extends Component {
             <Row gutter={24}>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={[]} option={optionText.weekS} />
+                  <Abar loading={loading} dataSource={noDayPlatformQuit} option={optionText.payN} />
                 </Suspense>
               </Col>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={[]} option={optionText.weekQ} />
+                  <Abar loading={loading} dataSource={noDayPlatformQuit} option={optionText.payT} />
                 </Suspense>
               </Col>
             </Row>
@@ -180,7 +190,33 @@ class Analysis extends Component {
             <Row gutter={24}>
               <Col xl={12} lg={24} md={24} sm={24} xs={24}>
                 <Suspense fallback={null}>
-                  <Abar loading={loading} dataSource={[]} option={optionText.weekP} />
+                  <Abar
+                    loading={loading}
+                    dataSource={noDayPlatformTrend}
+                    option={optionText.weekS}
+                  />
+                </Suspense>
+              </Col>
+              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Suspense fallback={null}>
+                  <Abar
+                    loading={loading}
+                    dataSource={noDayPlatformQuit}
+                    option={optionText.weekQ}
+                  />
+                </Suspense>
+              </Col>
+            </Row>
+          </div>
+          <div className={styles.twoColLayout}>
+            <Row gutter={24}>
+              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Suspense fallback={null}>
+                  <Abar
+                    loading={loading}
+                    dataSource={noDayPlatformQuit}
+                    option={optionText.weekP}
+                  />
                 </Suspense>
               </Col>
             </Row>

@@ -48,7 +48,7 @@ class Abar extends React.Component {
   };
 
   render() {
-    const { loading, option } = this.props;
+    const { loading, option, dataSource } = this.props;
     return (
       <Card
         loading={loading}
@@ -57,7 +57,7 @@ class Abar extends React.Component {
         title={option[0]}
         style={{ marginTop: 24 }}
       >
-        <ReactEcharts option={this.getOption()} theme="macarons" style={{ height: 300 }} />
+        <ReactEcharts option={dataSource || {}} theme="macarons" style={{ height: 300 }} />
       </Card>
     );
   }

@@ -44,7 +44,7 @@ class LineData extends React.Component {
   };
 
   render() {
-    const { loading, option, noType, handleChangeNoType } = this.props;
+    const { loading, option, noType, handleChangeNoType, dataSource } = this.props;
 
     return (
       <Card
@@ -65,7 +65,7 @@ class LineData extends React.Component {
           ) : null
         }
       >
-        <ReactEcharts option={this.getOption()} theme="macarons" style={{ height: 500 }} />
+        <ReactEcharts option={dataSource} theme="macarons" style={{ height: 500 }} />
       </Card>
     );
   }
