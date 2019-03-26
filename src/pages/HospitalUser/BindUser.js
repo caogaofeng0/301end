@@ -14,10 +14,10 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ rule, loading, global }) => ({
-  rule,
+@connect(({ hUser, loading, global }) => ({
+  hUser,
   global,
-  loading: loading.models.rule,
+  loading: loading.models.hUser,
 }))
 @Form.create()
 class BindUser extends PureComponent {
@@ -25,6 +25,8 @@ class BindUser extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    currentPage: 1,
+    pageSize: 10,
   };
 
   columns = [
@@ -59,11 +61,23 @@ class BindUser extends PureComponent {
   ];
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'rule/fetch',
-    });
+    this.getUserBind();
   }
+
+  getUserBind = () => {
+    const { dispatch, form, hUser } = this.props;
+    const { currentPage, pageSize } = this.state;
+    const params = {
+      ...form.getFieldsValue(),
+      currentPage,
+      pageSize,
+      ID: hUser.bindId,
+    };
+    dispatch({
+      type: 'hUser/getHospitalUserBind',
+      payload: params,
+    });
+  };
 
   /**
    * 解绑
@@ -86,49 +100,21 @@ class BindUser extends PureComponent {
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
-    // const filters = Object.keys(filtersArg).reduce((obj, key) => {
-    //   const newObj = { ...obj };
-    //   newObj[key] = getValue(filtersArg[key]);
-    //   return newObj;
-    // }, {});
-
-    const params = {
+    this.setState({
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      ...formValues,
-      // ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
-    dispatch({
-      type: 'rule/fetch',
-      payload: params,
     });
-  };
-
-  previewItem = id => {
-    router.push(`/profile/basic/${id}`);
+    setTimeout(() => {
+      this.getUserBind();
+    }, 100);
   };
 
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
-    this.setState({
-      formValues: {},
-    });
-    dispatch({
-      type: 'rule/fetch',
-      payload: {},
-    });
-  };
-
-  toggleForm = () => {
-    const { expandForm } = this.state;
-    this.setState({
-      expandForm: !expandForm,
-    });
+    setTimeout(() => {
+      this.getUserBind();
+    }, 100);
   };
 
   /**
@@ -157,19 +143,8 @@ class BindUser extends PureComponent {
     const { dispatch, form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      const values = {
-        ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
-      };
 
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'rule/fetch',
-        payload: values,
-      });
+      this.getUserBind();
     });
   };
 
@@ -237,10 +212,15 @@ class BindUser extends PureComponent {
 
   render() {
     const {
-      rule: { data },
+      hUser: { hospitaluserBind },
       loading,
       global: { clientHeight },
     } = this.props;
+    const { selectedRows, showStatus } = this.state;
+    const hospList = {
+      list: hospitaluserBind.list,
+      pagination: hospitaluserBind.pagination,
+    };
     return (
       // <PageHeaderWrapper title={null}>
       <Card bordered={false}>
@@ -248,10 +228,10 @@ class BindUser extends PureComponent {
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
             scroll={{ y: clientHeight - 425 }}
-            rowKey={rowKey => rowKey.name}
+            rowKey={rowKey => rowKey.key}
             selectedRows={[]}
             loading={loading}
-            data={data}
+            data={hospList}
             columns={this.columns}
             rowSelection={null}
             onChange={this.handleStandardTableChange}

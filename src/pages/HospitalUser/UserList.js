@@ -1,16 +1,24 @@
-/* eslint-disable import/named */
-/* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import classNames from 'classnames';
 import moment from 'moment';
 import router from 'umi/router';
-import { Row, Col, Card, Form, Input, Button, Divider, DatePicker, Select, Icon } from 'antd';
+import {
+  Row,
+  Col,
+  Card,
+  Form,
+  Input,
+  Button,
+  Divider,
+  DatePicker,
+  Select,
+  Icon,
+  Table,
+} from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import confirmPopCon from './confirmPopCon';
 import UserNoModal from './UserNoModal';
-import { saveClientHeight } from '../../utils/utils';
 import styles from './UserList.less';
 
 const FormItem = Form.Item;
@@ -18,17 +26,19 @@ const { Option } = Select;
 
 /* eslint react/no-multi-comp:0 */
 @connect(({ rule, hUser, loading, global }) => ({
+  hUser,
   rule,
   global,
-  loading: loading.models.rule,
+  loading: loading.models.hUser,
 }))
 @Form.create()
 class UserList extends PureComponent {
   state = {
     expandForm: false,
     selectedRows: [],
-    formValues: {},
     showStatus: false,
+    currentPage: 1,
+    pageSize: 10,
   };
 
   columns = [
@@ -80,11 +90,38 @@ class UserList extends PureComponent {
   ];
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'rule/fetch',
-    });
+    this.getHospitalUser();
   }
+
+  getHospitalUser = () => {
+    const { dispatch, form } = this.props;
+    const { currentPage, pageSize } = this.state;
+    const params = {
+      ...form.getFieldsValue(),
+      currentPage,
+      pageSize,
+    };
+    dispatch({
+      type: 'hUser/getHospitalUserList',
+      payload: params,
+    });
+  };
+
+  expandedRowRender = (v, vt, vs) => {
+    const columns = [
+      { title: '第三方平台id', dataIndex: 'otherID', key: 'otherID' },
+      { title: '第三方平台用户id', dataIndex: 'otherUserID', key: 'otherUserID' },
+      { title: '注册时间', dataIndex: 'date', key: 'date' },
+    ];
+    const data = [];
+    data.push({
+      key: v,
+      date: vt,
+      otherID: vs,
+      otherUserID: '789',
+    });
+    return <Table columns={columns} dataSource={data} pagination={false} />;
+  };
 
   /**
    * 切换状态
@@ -106,7 +143,6 @@ class UserList extends PureComponent {
     dispatch({
       type: 'rule/listStatus',
     });
-    // console.log(record);
   };
 
   /**
@@ -136,32 +172,17 @@ class UserList extends PureComponent {
 
   getUnbinde = record => {
     // eslint-disable-next-line no-console
-    console.log(record, '------------>1111');
+    console.log(record, '------------>');
   };
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    // const filters = Object.keys(filtersArg).reduce((obj, key) => {
-    //   const newObj = { ...obj };
-    //   newObj[key] = getValue(filtersArg[key]);
-    //   return newObj;
-    // }, {});
-
-    const params = {
+  handleStandardTableChange = pagination => {
+    this.setState({
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      ...formValues,
-      // ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
-    dispatch({
-      type: 'rule/fetch',
-      payload: params,
     });
+    setTimeout(() => {
+      this.getHospitalUser();
+    }, 100);
   };
 
   previewItem = id => {
@@ -169,15 +190,9 @@ class UserList extends PureComponent {
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
-    this.setState({
-      formValues: {},
-    });
-    dispatch({
-      type: 'rule/fetch',
-      payload: {},
-    });
+    this.getHospitalUser();
   };
 
   toggleForm = () => {
@@ -192,7 +207,6 @@ class UserList extends PureComponent {
    */
   // eslint-disable-next-line no-unused-vars
   noHistory = (text, record) => {
-    //  const {showStatus} = this.state;
     this.setState({
       showStatus: true,
     });
@@ -212,23 +226,16 @@ class UserList extends PureComponent {
 
   handleSearch = e => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
-    form.validateFields((err, fieldsValue) => {
+    const { form } = this.props;
+    form.validateFields(err => {
       if (err) return;
-      const values = {
-        ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
-      };
-
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'rule/fetch',
-        payload: values,
-      });
+      this.getHospitalUser();
     });
+  };
+
+  expandedRowsChange = (expanded, record) => {
+    // eslint-disable-next-line no-console
+    console.log(expanded, record, 'expandedRowsChange');
   };
 
   renderAdvancedForm() {
@@ -314,15 +321,16 @@ class UserList extends PureComponent {
 
   render() {
     const {
-      rule: { data },
       loading,
-      global: { clientHeight },
+      // global: { clientHeight },
+      hUser: { hospitaluserList },
     } = this.props;
     const { selectedRows, showStatus } = this.state;
-    console.log(clientHeight, 'clientHeight');
+    const hospList = {
+      list: hospitaluserList.list,
+      pagination: hospitaluserList.pagination,
+    };
     return (
-      // <PageHeaderWrapper title={null}>
-
       <Card bordered={false}>
         <div className={styles.tableList}>
           {showStatus ? (
@@ -335,17 +343,20 @@ class UserList extends PureComponent {
           ) : null}
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            scroll={{ y: clientHeight - 370 }}
+            // scroll={{ y: clientHeight - 370 }}
             selectedRows={selectedRows}
             loading={loading}
-            data={data}
+            data={hospList}
             columns={this.columns}
             rowSelection={null}
+            expandedRowRender={record =>
+              this.expandedRowRender(record.updatedAt, record.updatedAt, record.updatedAt)
+            }
+            onExpand={this.expandedRowsChange}
             onChange={this.handleStandardTableChange}
           />
         </div>
       </Card>
-      // </PageHeaderWrapper>
     );
   }
 }

@@ -24,21 +24,23 @@ class BindUserHistory extends PureComponent {
   state = {
     selectedRows: [],
     formValues: {},
+    currentPage: 1,
+    pageSize: 10,
   };
 
   columns = [
     {
       title: '就诊时间',
-      dataIndex: 'time',
+      dataIndex: 'callNo',
       render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
       title: '就诊序号',
-      dataIndex: 'num',
+      dataIndex: 'status',
     },
     {
       title: '号别',
-      dataIndex: 'otherNum',
+      dataIndex: 'id',
       render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
@@ -47,80 +49,59 @@ class BindUserHistory extends PureComponent {
     },
     {
       title: '费别',
-      dataIndex: 'money',
+      dataIndex: 'progress',
     },
     {
       title: '挂号途径',
-      dataIndex: 'line',
+      dataIndex: 'desc',
     },
   ];
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'hUser/bindFetch',
-    });
+    this.getUserBindHistory();
   }
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    // const filters = Object.keys(filtersArg).reduce((obj, key) => {
-    //   const newObj = { ...obj };
-    //   newObj[key] = getValue(filtersArg[key]);
-    //   return newObj;
-    // }, {});
-
+  getUserBindHistory = () => {
+    const { dispatch, form, hUser } = this.props;
+    const { currentPage, pageSize } = this.state;
     const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      // ...filters,
+      ...form.getFieldsValue(),
+      currentPage,
+      pageSize,
+      ID: hUser.bindId,
     };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
     dispatch({
-      type: 'hUser/bindFetch',
+      type: 'hUser/getHospitalUserBindHistory',
       payload: params,
     });
   };
 
-  previewItem = id => {
-    router.push(`/profile/basic/${id}`);
+  handleStandardTableChange = (pagination, filtersArg, sorter) => {
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
+    this.setState({
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+    setTimeout(() => {
+      this.getUserBindHistory();
+    }, 100);
   };
 
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
-    this.setState({
-      formValues: {},
-    });
-    dispatch({
-      type: 'hUser/bindFetch',
-      payload: {},
-    });
+    setTimeout(() => {
+      this.getUserBindHistory();
+    }, 100);
   };
 
   handleSearch = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
-    form.validateFields((err, fieldsValue) => {
+    form.validateFields(err => {
       if (err) return;
-      const values = {
-        ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
-      };
-
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'hUser/bindFetch',
-        payload: values,
-      });
+      this.getUserBindHistory();
     });
   };
 
@@ -174,12 +155,17 @@ class BindUserHistory extends PureComponent {
 
   render() {
     const {
-      hUser: { bindData },
+      hUser: { hospitaluserBindHistory },
       loading,
       global: { clientHeight },
     } = this.props;
     const { selectedRows } = this.state;
-    console.log(bindData, '进入渲染');
+    // eslint-disable-next-line no-console
+    console.log(hospitaluserBindHistory, '进入渲染');
+    const bindHistroy = {
+      list: hospitaluserBindHistory.list,
+      pagination: hospitaluserBindHistory.pagination,
+    };
 
     return (
       // <PageHeaderWrapper title={null}>
@@ -188,10 +174,10 @@ class BindUserHistory extends PureComponent {
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
             scroll={{ y: clientHeight - 370 }}
-            rowKey={rowKey => rowKey.num}
+            rowKey={rowKey => rowKey.key}
             selectedRows={selectedRows}
             loading={loading}
-            data={bindData}
+            data={bindHistroy}
             columns={this.columns}
             rowSelection={null}
             onChange={this.handleStandardTableChange}

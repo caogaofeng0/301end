@@ -15,3 +15,38 @@ export async function userNoHistory() {
 export async function userBindHistory() {
   return request('/api/user/bind/history');
 }
+
+export async function hospitaluserList(params) {
+  return request('/api/hospital/user/list', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function hospitaluserBindList(params) {
+  return request('/api/hospital/user/Bind/list', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+export async function hospitaluserBindListHistory(params) {
+  return request('/api/hospital/user/Bind/list/history', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function hospitaluserNo(params) {
+  return request('/api/hospital/user/no', {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}

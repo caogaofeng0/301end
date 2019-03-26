@@ -14,7 +14,12 @@ const { Option } = Select;
 }))
 @Form.create()
 class UserNoModal extends Component {
-  state = {};
+  state = {
+    // eslint-disable-next-line react/no-unused-state
+    currentPage: 1,
+    // eslint-disable-next-line react/no-unused-state
+    pageSize: 10,
+  };
 
   columns = [
     {
@@ -50,20 +55,30 @@ class UserNoModal extends Component {
   ];
 
   componentWillMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'hUser/fetch',
-      payload: {},
-    });
+    this.getUserNo();
   }
+
+  getUserNo = () => {
+    const { dispatch, form, hUser } = this.props;
+    const { currentPage, pageSize } = this.state;
+    const params = {
+      ...form.getFieldsValue(),
+      currentPage,
+      pageSize,
+      ID: hUser.bindId,
+    };
+    dispatch({
+      type: 'hUser/getHospitalUserNo',
+      payload: params,
+    });
+  };
 
   handleSubmit = e => {
     e.preventDefault();
     const { form } = this.props;
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
+    form.validateFieldsAndScroll(err => {
+      if (err) return;
+      this.getUserNo();
     });
   };
 
@@ -77,49 +92,36 @@ class UserNoModal extends Component {
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
-    dispatch({
-      type: 'hUser/fetch',
-      payload: {},
-    });
+    this.getUserNo();
   };
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    // const filters = Object.keys(filtersArg).reduce((obj, key) => {
-    //   const newObj = { ...obj };
-    //   newObj[key] = getValue(filtersArg[key]);
-    //   return newObj;
-    // }, {});
-
-    const params = {
+  handleStandardTableChange = pagination => {
+    this.setState({
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      ...formValues,
-      // ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
-    dispatch({
-      type: 'hUser/fetch',
-      payload: params,
     });
+    setTimeout(() => {
+      this.getUserNo();
+    }, 100);
   };
 
   render() {
-    const { showStatus, confirmLoading, handleNoModal, hideNoModal } = this.props;
     const {
+      showStatus,
+      confirmLoading,
+      handleNoModal,
+      hideNoModal,
       form: { getFieldDecorator },
-    } = this.props;
-    const {
-      hUser: { data },
+      hUser: { hospitaluserNo },
       loading,
     } = this.props;
-    console.log('进入渲染', data);
+    const hospList = {
+      list: hospitaluserNo.list,
+      pagination: hospitaluserNo.pagination,
+    };
+    console.log('进入渲染', hospList);
     return (
       <div>
         <Modal
@@ -192,10 +194,10 @@ class UserNoModal extends Component {
             </Row>
           </Form>
           <StandardTable
-            rowKey={rowKey => rowKey.userId}
+            rowKey={rowKey => rowKey.key}
             selectedRows={[]}
             loading={loading}
-            data={data}
+            data={hospList}
             columns={this.columns}
             rowSelection={null}
             onChange={this.handleStandardTableChange}

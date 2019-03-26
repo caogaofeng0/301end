@@ -42,6 +42,7 @@ class User extends Component {
   getFetch = () => {
     const { dispatch } = this.props;
     // const { approver, time} = this.state
+    // eslint-disable-next-line no-console
     console.log('getFetch');
     dispatch({
       type: 'business/noTrendFetch',
@@ -116,6 +117,7 @@ class User extends Component {
       // const values = {
       //   ...fieldsValue,
       // };
+      // eslint-disable-next-line no-console
       console.log({ ...fieldsValue });
       this.setState({
         ...fieldsValue,
@@ -127,7 +129,6 @@ class User extends Component {
   render() {
     const { noType } = this.state;
     const { business, loading } = this.props;
-
     const optionText = {
       row: ['用户数', '绑定患者数', '实名用户数', '异常用户增量数'],
       line: ['各平台用户走势图（30天）', '挂号订单数'],
