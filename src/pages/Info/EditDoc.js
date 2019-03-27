@@ -3,6 +3,7 @@
 /* eslint-disable react/no-unused-state */
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
+import { connect } from 'dva';
 import {
   Modal,
   Button,
@@ -17,6 +18,7 @@ import {
   Checkbox,
   AutoComplete,
   Radio,
+  Upload,
 } from 'antd';
 
 const RadioButton = Radio.Button;
@@ -24,6 +26,10 @@ const RadioGroup = Radio.Group;
 const { Option } = Select;
 const AutoCompleteOption = AutoComplete.Option;
 
+@connect(({ info, loading }) => ({
+  info,
+  loading: loading.models.info,
+}))
 @Form.create()
 class EditDoc extends Component {
   // eslint-disable-next-line no-useless-constructor
@@ -37,6 +43,13 @@ class EditDoc extends Component {
     autoCompleteResult: [],
   };
 
+  componentDidMount() {
+    const { form } = this.props;
+    form.setFieldsValue({
+      name: 'wzj',
+    });
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -46,8 +59,41 @@ class EditDoc extends Component {
     });
   };
 
+  normFile = e => {
+    console.log('Upload event:', e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  hideEditModal = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'info/changeEditDocStatus',
+    });
+  };
+
+  handleEditModal = () => {
+    const { dispatch, info } = this.props;
+    dispatch({
+      type: 'info/changeEditDocStatusLoading',
+    });
+    setTimeout(() => {
+      dispatch({
+        type: 'info/changeEditDocStatus',
+      });
+      dispatch({
+        type: 'info/changeEditDocStatusLoading',
+      });
+    }, 4000);
+  };
+
   render() {
-    const { visibleStatus, confirmLoading, handleEditModal, hideEditModal } = this.props;
+    const {
+      visibleStatus,
+      info: { editDocStatusLoading },
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { autoCompleteResult } = this.state;
     const formItemLayout = {
@@ -72,26 +118,14 @@ class EditDoc extends Component {
         },
       },
     };
-    const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: '86',
-    })(
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
-
-    const websiteOptions = autoCompleteResult.map(website => (
-      <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
-    ));
     return (
       <div>
         <Modal
           title="医生信息"
           visible={visibleStatus}
-          onOk={handleEditModal}
-          confirmLoading={confirmLoading}
-          onCancel={hideEditModal}
+          onOk={this.handleEditModal}
+          confirmLoading={editDocStatusLoading}
+          onCancel={this.hideEditModal}
           width="60%"
         >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
@@ -122,6 +156,21 @@ class EditDoc extends Component {
                   <RadioButton value="b">女</RadioButton>
                   <RadioButton value="c">未知</RadioButton>
                 </RadioGroup>
+              )}
+            </Form.Item>
+            <Form.Item
+              label="Upload"
+              // extra="地址"
+            >
+              {getFieldDecorator('upload', {
+                valuePropName: 'fileList',
+                getValueFromEvent: this.normFile,
+              })(
+                <Upload name="logo" action="/upload.do" listType="picture">
+                  <Button>
+                    <Icon type="upload" /> 点击上传头像
+                  </Button>
+                </Upload>
               )}
             </Form.Item>
             <Form.Item label="职称">

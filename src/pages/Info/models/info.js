@@ -13,7 +13,9 @@ export default {
       abstract: '',
       leader: '',
     },
+    editDocStatusLoading: false,
     departList: [],
+    editDocStatus: false,
   },
 
   effects: {
@@ -57,6 +59,19 @@ export default {
       return {
         ...state,
         departList: action.payload,
+      };
+    },
+    changeEditDocStatus(state) {
+      return {
+        ...state,
+        editDocStatus: !state.editDocStatus,
+      };
+    },
+    changeEditDocStatusLoading(state) {
+      console.log('进入');
+      return {
+        ...state,
+        editDocStatusLoading: !state.editDocStatusLoading,
       };
     },
   },

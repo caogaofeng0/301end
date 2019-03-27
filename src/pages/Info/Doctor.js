@@ -1,20 +1,12 @@
-/* eslint-disable react/sort-comp */
-/* eslint-disable no-console */
-/* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
-import router from 'umi/router';
-import { Row, Col, Card, Form, Input, Button, Divider, DatePicker, Select, Icon } from 'antd';
+import { Row, Col, Card, Form, Input, Button } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import EditDoc from './EditDoc';
 import styles from './Doctor.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
 
-/* eslint react/no-multi-comp:0 */
 @connect(({ info, loading }) => ({
   info,
   loading: loading.models.info,
@@ -22,12 +14,8 @@ const { Option } = Select;
 @Form.create()
 class DoctorList extends PureComponent {
   state = {
-    expandForm: false,
-    selectedRows: [],
     formValues: {},
-    visibleStatus: false,
-    confirmLoading: false,
-    ModalText: 'didiidiid',
+    ModalText: '301',
   };
 
   columns = [
@@ -35,7 +23,6 @@ class DoctorList extends PureComponent {
       title: '医生姓名',
       width: 100,
       dataIndex: 'owner',
-      render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
     },
     {
       title: '性别',
@@ -66,18 +53,10 @@ class DoctorList extends PureComponent {
   /**
    * 编辑信息
    */
-  handDoctorInfo = (text, record) => {
-    console.log(text, record, '-------->');
-    const { visibleStatus } = this.state;
-    this.setState({
-      visibleStatus: true,
-    });
-  };
-
-  hideEditModal = () => {
-    const { visibleStatus } = this.state;
-    this.setState({
-      visibleStatus: false,
+  handDoctorInfo = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'info/changeEditDocStatus',
     });
   };
 
@@ -88,7 +67,7 @@ class DoctorList extends PureComponent {
     });
   };
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
+  handleStandardTableChange = pagination => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
     const params = {
@@ -97,18 +76,11 @@ class DoctorList extends PureComponent {
       ...formValues,
       // ...filters,
     };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
 
     dispatch({
       type: 'rule/fetch',
       payload: params,
     });
-  };
-
-  previewItem = id => {
-    router.push(`/profile/basic/${id}`);
   };
 
   handleFormReset = () => {
@@ -120,13 +92,6 @@ class DoctorList extends PureComponent {
     dispatch({
       type: 'rule/fetch',
       payload: {},
-    });
-  };
-
-  toggleForm = () => {
-    const { expandForm } = this.state;
-    this.setState({
-      expandForm: !expandForm,
     });
   };
 
@@ -151,8 +116,8 @@ class DoctorList extends PureComponent {
     });
   };
 
+  // eslint-disable-next-line react/sort-comp
   renderAdvancedForm() {
-    const { expandForm } = this.state;
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -190,26 +155,19 @@ class DoctorList extends PureComponent {
 
   render() {
     const {
-      info: { data },
+      info: { data, editDocStatus },
       loading,
     } = this.props;
-    // console.log(data, '---------list----->');
-    const { selectedRows, visibleStatus, confirmLoading, ModalText } = this.state;
+    const { ModalText } = this.state;
     return (
       <Fragment>
-        <EditDoc
-          visibleStatus={visibleStatus}
-          confirmLoading={confirmLoading}
-          handleEditModal={this.handleEditModal}
-          hideEditModal={this.hideEditModal}
-          ModalText={ModalText}
-        />
+        <EditDoc visibleStatus={editDocStatus} ModalText={ModalText} />
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
             <StandardTable
               rowKey={record => record.id}
-              selectedRows={selectedRows}
+              selectedRows={[]}
               loading={loading}
               data={data}
               columns={this.columns}
