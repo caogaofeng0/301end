@@ -3,7 +3,6 @@ import { formatMessage } from 'umi/locale';
 import { Layout, message } from 'antd';
 import Animate from 'rc-animate';
 import { connect } from 'dva';
-import router from 'umi/router';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
 import styles from './Header.less';
@@ -42,7 +41,6 @@ class HeaderView extends Component {
   };
 
   handleNoticeClear = type => {
-    debugger;
     message.success(
       `${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({
         id: `component.globalHeader.${type}`,
@@ -57,9 +55,9 @@ class HeaderView extends Component {
 
   handleSignOut = () => {
     const { dispatch } = this.props;
-      dispatch({
-        type: 'login/logout',
-      });
+    dispatch({
+      type: 'login/logout',
+    });
   };
 
   handleNoticeVisibleChange = visible => {
@@ -98,10 +96,9 @@ class HeaderView extends Component {
         this.ticking = false;
       });
     }
-  }
+  };
 
   render() {
-
     const { isMobile, handleMenuCollapse, setting } = this.props;
     const { navTheme, layout, fixedHeader } = setting;
     const { visible } = this.state;

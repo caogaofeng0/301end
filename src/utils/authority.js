@@ -13,12 +13,10 @@ export function getAuthority(str) {
   if (typeof authority === 'string') {
     return [authority];
   }
-  console.log(authority, '--------->67');
   return authority || ['admin'];
 }
 
 export function setAuthority(authority) {
   const proAuthority = typeof authority === 'string' ? [authority] : authority;
-  console.log(proAuthority, '--------->iop');
   return localStorage.setItem('antd-pro-authority', JSON.stringify(proAuthority));
 }

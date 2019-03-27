@@ -1,44 +1,36 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { formatMessage } from 'umi/locale';
-// import Link from 'umi/link';
-import { Checkbox, Alert } from 'antd';
-import Login from '@/components/Login';
+import { Alert, Form, Input, Row, Col, Button, message } from 'antd';
 import styles from './Login.less';
 
-const { Tab, UserName, Password, Submit } = Login;
-
+const FormItem = Form.Item;
 @connect(({ login, loading }) => ({
   login,
   submitting: loading.effects['login/login'],
 }))
+@Form.create()
 class LoginPage extends Component {
-  state = {
-    type: 'account',
-    autoLogin: true,
-  };
+  state = {};
 
-  onTabChange = type => {
-    this.setState({ type });
-  };
-
-  handleSubmit = (err, values) => {
-    const { type } = this.state;
-    if (!err) {
-      const { dispatch } = this.props;
-      dispatch({
-        type: 'login/login',
-        payload: {
-          ...values,
-          type,
-        },
-      });
+  // eslint-disable-next-line consistent-return
+  handleSubmit = e => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
+    const val = { ...form.getFieldsValue() };
+    if (!val.userName) {
+      message.warning('账号不能为空');
+      return false;
     }
-  };
-
-  changeAutoLogin = e => {
-    this.setState({
-      autoLogin: e.target.checked,
+    if (!val.password) {
+      message.warning('密码不能为空');
+      return false;
+    }
+    dispatch({
+      type: 'login/login',
+      payload: {
+        ...form.getFieldsValue(),
+        type: 'account',
+      },
     });
   };
 
@@ -47,57 +39,41 @@ class LoginPage extends Component {
   );
 
   render() {
-    const { login, submitting } = this.props;
-    const { type, autoLogin } = this.state;
+    const {
+      form: { getFieldDecorator },
+    } = this.props;
     return (
       <div className={styles.main}>
-        <Login
-          defaultActiveKey={type}
-          onTabChange={this.onTabChange}
-          onSubmit={this.handleSubmit}
-          ref={form => {
-            this.loginForm = form;
-          }}
-        >
-          <Tab key="account" tab={formatMessage({ id: 'app.login.tab-login-credentials' })}>
-            {login.status === 'error' &&
-              login.type === 'account' &&
-              !submitting &&
-              this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
-            <UserName
-              name="userName"
-              // placeholder={`${formatMessage({ id: 'app.login.userName' })}: admin or user`}
-              placeholder="请输入您的账号"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入您的账号',
-                },
-              ]}
-            />
-            <Password
-              name="password"
-              // placeholder={`${formatMessage({ id: 'app.login.password' })}: ant.design`}
-              placeholder="请输入您的密码"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入您的密码',
-                },
-              ]}
-              onPressEnter={e => {
-                e.preventDefault();
-                this.loginForm.validateFields(this.handleSubmit);
-              }}
-            />
-          </Tab>
-          <div>
-            <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
-              自动登录{' '}
-            </Checkbox>
-          </div>
-          <Submit loading={submitting}>登录</Submit>
-        </Login>
+        <div className={styles.mainLogn}>
+          <img src="/logo_301.png" alt="301" />
+          <span>解放军总医院管理系统</span>
+        </div>
+        <div className={styles.mainLogin}>
+          <span className={styles.mainLoginWel}>掌上301欢迎您！</span>
+          <Form onSubmit={this.handleSubmit} layout="vertical">
+            <Row gutter={{ md: 4, lg: 4, xl: 4 }}>
+              <Col md={24} sm={24}>
+                <FormItem label={null}>
+                  {getFieldDecorator('userName')(<Input placeholder="账号" />)}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row gutter={{ md: 4, lg: 4, xl: 4 }}>
+              <Col md={24} sm={24}>
+                <FormItem label={null}>
+                  {getFieldDecorator('password')(<Input type="password" placeholder="密码" />)}
+                </FormItem>
+              </Col>
+            </Row>
+            <Row gutter={{ md: 4, lg: 4, xl: 4 }}>
+              <Col md={24} sm={24}>
+                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                  登录
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </div>
       </div>
     );
   }
