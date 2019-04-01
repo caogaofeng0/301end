@@ -32,24 +32,27 @@ class BindUser extends PureComponent {
   columns = [
     {
       title: '门诊号',
-      dataIndex: 'name',
-      render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+      dataIndex: 'patient_id',
+      align: 'center',
     },
     {
       title: '与用户关系',
-      dataIndex: 'owner',
+      dataIndex: 'relationship',
+      align: 'center',
     },
     {
       title: '绑定时间',
-      dataIndex: 'updatedAt',
-      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      dataIndex: 'date_of_birth',
+      align: 'center',
     },
     {
       title: '医学中心名称',
-      dataIndex: 'createdAt',
+      dataIndex: 'charge_type',
+      align: 'center',
     },
     {
       title: '操作',
+      align: 'center',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.unbind(text, record)}>解除绑定</a>
@@ -93,8 +96,14 @@ class BindUser extends PureComponent {
   };
 
   getUnbinde = record => {
-    // eslint-disable-next-line no-console
-    console.log(record, '------------>1111');
+    const { dispatch } = this.props;
+    // eslint-disable-next-line camelcase
+    const { user_id, patient_id } = record;
+    dispatch({
+      type: 'hUser/getUnbindPatient',
+      payload: { user_id, patient_id },
+      callback: this.getUserBind,
+    });
   };
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -159,31 +168,11 @@ class BindUser extends PureComponent {
             <FormItem label={null}>
               {getFieldDecorator('center')(
                 <Select placeholder="请选择医学中心">
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24} style={{ height: 56 }}>
-            <FormItem label={null}>
-              {getFieldDecorator('platform')(
-                <Select placeholder="请选择第三方平台id" initialValue="">
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24} style={{ height: 56 }}>
-            <FormItem label={null}>
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择患者状态" initialValue="">
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
+                  <Select.Option value="one">第一中心医院</Select.Option>
+                  <Select.Option value="two">第二中心医院</Select.Option>
+                  <Select.Option value="three">第三中心医院</Select.Option>
+                  <Select.Option value="four">第四中心医院</Select.Option>
+                  <Select.Option value="five">第五中心医院</Select.Option>
                 </Select>
               )}
             </FormItem>
@@ -218,7 +207,7 @@ class BindUser extends PureComponent {
     } = this.props;
     const { selectedRows, showStatus } = this.state;
     const hospList = {
-      list: hospitaluserBind.list,
+      list: hospitaluserBind.patient_list,
       pagination: hospitaluserBind.pagination,
     };
     return (
@@ -227,8 +216,8 @@ class BindUser extends PureComponent {
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            scroll={{ y: clientHeight - 425 }}
-            rowKey={rowKey => rowKey.key}
+            // scroll={{ y: clientHeight - 425 }}
+            rowKey={rowKey => rowKey.document_no}
             selectedRows={[]}
             loading={loading}
             data={hospList}

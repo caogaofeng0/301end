@@ -66,9 +66,12 @@ class User extends Component {
           <Col lg={6} md={12} sm={24}>
             <Form.Item label={null} className={styles.noSelect}>
               {getFieldDecorator('approver')(
-                <Select placeholder="请选择审批员">
-                  <Select.Option value="xiao">付晓晓</Select.Option>
-                  <Select.Option value="mao">周毛毛</Select.Option>
+                <Select placeholder="请选择中心医院">
+                  <Select.Option value="one">第一中心医院</Select.Option>
+                  <Select.Option value="two">第二中心医院</Select.Option>
+                  <Select.Option value="three">第三中心医院</Select.Option>
+                  <Select.Option value="four">第四中心医院</Select.Option>
+                  <Select.Option value="five">第五中心医院</Select.Option>
                 </Select>
               )}
             </Form.Item>
@@ -76,13 +79,7 @@ class User extends Component {
           <Col lg={7} md={24}>
             <FormItem label={null}>
               {getFieldDecorator('time')(
-                <DatePicker.RangePicker
-                  initialValue={[
-                    moment('2015/01/01', dateFormat),
-                    moment('2015/01/01', dateFormat),
-                  ]}
-                  format={dateFormat}
-                />
+                <DatePicker initialValue={[moment('2015/01/01', dateFormat)]} format={dateFormat} />
               )}
             </FormItem>
           </Col>

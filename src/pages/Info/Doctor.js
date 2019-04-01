@@ -23,18 +23,23 @@ class DoctorList extends PureComponent {
       title: '医生姓名',
       width: 100,
       dataIndex: 'owner',
+      align: 'center',
     },
     {
       title: '性别',
-      dataIndex: 'id',
+      dataIndex: 'sex',
+      width: 100,
+      align: 'center',
     },
     {
       title: '特长',
       dataIndex: 'content',
+      align: 'center',
     },
     {
       title: '操作',
       width: 100,
+      align: 'center',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.handDoctorInfo(text, record)}>编辑</a>
@@ -95,6 +100,13 @@ class DoctorList extends PureComponent {
     });
   };
 
+  handleAddDoctor = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'info/changeEditDocStatus',
+    });
+  };
+
   handleSearch = e => {
     e.preventDefault();
     const { dispatch, form } = this.props;
@@ -138,7 +150,7 @@ class DoctorList extends PureComponent {
                 <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
-                <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
+                <Button style={{ marginLeft: 20 }} onClick={this.handleAddDoctor}>
                   新增医生
                 </Button>
               </div>
@@ -159,6 +171,8 @@ class DoctorList extends PureComponent {
       loading,
     } = this.props;
     const { ModalText } = this.state;
+    console.log(data, 'data-------->');
+
     return (
       <Fragment>
         <EditDoc visibleStatus={editDocStatus} ModalText={ModalText} />

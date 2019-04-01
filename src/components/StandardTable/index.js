@@ -65,11 +65,13 @@ class StandardTable extends PureComponent {
     const { selectedRowKeys, needTotalList } = this.state;
     const { data = {}, rowKey, alertIsShow = false, ...rest } = this.props;
     const { list = [], pagination } = data;
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      ...pagination,
-    };
+    const paginationProps = pagination
+      ? {
+          showSizeChanger: true,
+          showQuickJumper: true,
+          ...pagination,
+        }
+      : false;
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handleRowSelectChange,
@@ -80,7 +82,7 @@ class StandardTable extends PureComponent {
 
     return (
       <div className={styles.standardTable}>
-        {alertIsShow ? 
+        {alertIsShow ? (
           <div className={styles.tableAlert}>
             <Alert
               message={
@@ -103,7 +105,8 @@ class StandardTable extends PureComponent {
               type="info"
               showIcon
             />
-          </div> : null }
+          </div>
+        ) : null}
         <Table
           rowKey={rowKey || 'key'}
           rowSelection={rowSelection}

@@ -31,29 +31,33 @@ class BindUserHistory extends PureComponent {
   columns = [
     {
       title: '就诊时间',
-      dataIndex: 'callNo',
-      render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+      dataIndex: 'visit_date',
+      align: 'center',
     },
     {
       title: '就诊序号',
-      dataIndex: 'status',
+      dataIndex: 'visit_no',
+      align: 'center',
     },
     {
       title: '号别',
-      dataIndex: 'id',
-      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      dataIndex: 'clinic_label',
+      align: 'center',
     },
     {
       title: '身份',
-      dataIndex: 'createdAt',
+      dataIndex: 'clinic_type',
+      align: 'center',
     },
     {
       title: '费别',
-      dataIndex: 'progress',
+      dataIndex: 'charge_type',
+      align: 'center',
     },
     {
-      title: '挂号途径',
-      dataIndex: 'desc',
+      title: '第三方平台',
+      dataIndex: 'register_from',
+      align: 'center',
     },
   ];
 
@@ -116,6 +120,7 @@ class BindUserHistory extends PureComponent {
             <FormItem label={null}>
               {getFieldDecorator('center')(
                 <RangePicker
+                  placeholder={['就诊开始日期', '就诊结束日期']}
                   initialValue={[
                     moment('2015/01/01', dateFormat),
                     moment('2015/01/01', dateFormat),
@@ -128,10 +133,10 @@ class BindUserHistory extends PureComponent {
           <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('platform')(
-                <Select placeholder="请选择挂号途径" initialValue="">
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
+                <Select placeholder="请选择第三方平台" initialValue="">
+                  <Option value="jack">微医</Option>
+                  <Option value="lucy">微信</Option>
+                  <Option value="tom">其他</Option>
                 </Select>
               )}
             </FormItem>
@@ -163,7 +168,7 @@ class BindUserHistory extends PureComponent {
     // eslint-disable-next-line no-console
     console.log(hospitaluserBindHistory, '进入渲染');
     const bindHistroy = {
-      list: hospitaluserBindHistory.list,
+      list: hospitaluserBindHistory.register_list,
       pagination: hospitaluserBindHistory.pagination,
     };
 
@@ -173,8 +178,8 @@ class BindUserHistory extends PureComponent {
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            scroll={{ y: clientHeight - 370 }}
-            rowKey={rowKey => rowKey.key}
+            // scroll={{ y: clientHeight - 370 }}
+            rowKey={rowKey => rowKey.visit_no}
             selectedRows={selectedRows}
             loading={loading}
             data={bindHistroy}

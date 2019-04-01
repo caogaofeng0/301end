@@ -66,6 +66,7 @@ function fakeList(count) {
   for (let i = 0; i < count; i += 1) {
     list.push({
       id: `fake-list-${i}`,
+      sex: '男',
       owner: user[i % 10],
       title: titles[i % 8],
       avatar: avatars[i % 8],

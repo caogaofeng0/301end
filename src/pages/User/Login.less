@@ -48,15 +48,12 @@
         border: none;
         border-bottom: 1px solid #d9d9d9;
         border-radius: 0;
-        outline: 0;
-        &:focus {
-          border-bottom: 1px solid #4491f7;
-          outline: none;
-          :global {
-            input::placeholder {
-              color: #4491f7;
-            }
-          }
+      }
+      input:focus {
+        border-bottom: 1px solid #4491f7;
+        outline: none;
+        &::placeholder {
+          color: #4491f7;
         }
       }
       button {

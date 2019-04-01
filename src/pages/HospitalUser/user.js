@@ -24,9 +24,9 @@ class User extends PureComponent {
     const analyUrl = () => {
       // eslint-disable-next-line no-nested-ternary
       return urlArr.includes('bindhistory') ? (
-        <Link to="/hospitalUser/userlist/bindUser">绑定的患者</Link>
+        <Link to="/hospitalUser/userlist/bindUser">绑定的患者(用户：张三/001)</Link>
       ) : urlArr.includes('bindUser') ? (
-        '绑定的患者'
+        '绑定的患者(用户：张三/001)'
       ) : null;
     };
     return (
@@ -44,7 +44,9 @@ class User extends PureComponent {
             )}
           </Breadcrumb.Item>
           <Breadcrumb.Item>{analyUrl()}</Breadcrumb.Item>
-          {urlArr.includes('bindhistory') ? <Breadcrumb.Item>患者挂号记录</Breadcrumb.Item> : null}
+          {urlArr.includes('bindhistory') ? (
+            <Breadcrumb.Item>患者挂号记录(用户：张三/001)(患者：张小弟/x001)</Breadcrumb.Item>
+          ) : null}
         </Breadcrumb>
         {children}
       </div>

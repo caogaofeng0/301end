@@ -2,9 +2,10 @@ import {
   userNoHistory,
   userBindHistory,
   hospitaluserList,
-  hospitaluserBindList,
+  hospitalUserBindList,
   hospitaluserBindListHistory,
   hospitaluserNo,
+  unbindPatient,
 } from '@/services/hospitalUser';
 
 export default {
@@ -53,7 +54,7 @@ export default {
       });
     },
     *getHospitalUserBind({ payload }, { call, put }) {
-      const response = yield call(hospitaluserBindList, payload);
+      const response = yield call(hospitalUserBindList, payload);
       yield put({
         type: 'saveHospitaluserBind',
         payload: response,
@@ -79,6 +80,12 @@ export default {
         type: 'bindSave',
         payload: response,
       });
+    },
+    *getUnbindPatient({ payload, callback }, { call }) {
+      const response = yield call(unbindPatient, payload);
+      if (response && response.result_code === '0') {
+        callback();
+      }
     },
   },
 
@@ -110,13 +117,14 @@ export default {
     saveHospitaluserBind(state, action) {
       return {
         ...state,
-        hospitaluserBind: action.payload,
+        hospitaluserBind: action.payload.response_results,
       };
     },
     saveHospitaluserBindHistory(state, action) {
+      console.log(action.payload, '绑定历史');
       return {
         ...state,
-        hospitaluserBindHistory: action.payload,
+        hospitaluserBindHistory: action.payload.response_results,
       };
     },
     saveHospitaluserNo(state, action) {

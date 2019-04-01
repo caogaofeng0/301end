@@ -57,65 +57,71 @@ export default {
           'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
           'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
         ],
-        name: `TradeCode`,
+        name: `301`,
         title: `一个任务名称`,
         owner: '曲丽丽',
         desc: '这是一段描述',
-        callNo: Math.floor(Math.random() * 1000),
+        callNo: '2019-09-09 06:07',
         status: Math.floor(Math.random() * 10) % 4,
-        updatedAt: '2019',
-        createdAt: '2018',
+        updatedAt: '412724199909094567',
+        createdAt: '15078907890',
         progress: Math.ceil(Math.random() * 100),
       },
     ],
     pagination: { total: 46, pageSize: 10, current: 1 },
   }),
-  'POST /api/hospital/user/Bind/list': mockjs.mock({
-    code: 200,
-    'list|3': [
-      {
-        'key|+1': 1,
-        href: 'https://ant.design',
-        avatar: [
-          'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-          'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-        ],
-        name: `TradeCode`,
-        title: `一个任务名称`,
-        '@owner': '曲丽丽',
-        desc: '这是一段描述',
-        callNo: Math.floor(Math.random() * 1000),
-        status: Math.floor(Math.random() * 10) % 4,
-        updatedAt: '2019',
-        createdAt: '2018',
-        progress: Math.ceil(Math.random() * 100),
-      },
-    ],
-    pagination: { total: 46, pageSize: 10, current: 1 },
-  }),
-  'POST /api/hospital/user/Bind/list/history': mockjs.mock({
-    code: 200,
-    'list|3': [
-      {
-        'key|+1': 1,
-        href: 'https://ant.design',
-        avatar: [
-          'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-          'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-        ],
-        name: mockjs.Random.cname(),
-        title: `一个任务名称`,
-        owner: '曲丽丽',
-        desc: '这是一段描述',
-        callNo: Math.floor(Math.random() * 1000),
-        status: Math.floor(Math.random() * 10) % 4,
-        updatedAt: '2019',
-        createdAt: '2018',
-        progress: Math.ceil(Math.random() * 100),
-      },
-    ],
-    pagination: { total: 46, pageSize: 10, current: 1 },
-  }),
+  'GET /api/account/patients': {
+    // console.log(req.query, "user_id");
+    // const { user_id } = req.query;
+    // console.log(user_id, "user_id");
+    // debugger;
+    // res.json({
+    result_code: '',
+    error_message: '',
+    response_results: {
+      patient_list: [
+        {
+          patient_id: 'A12345678',
+          document_no: '110011201103232345',
+          name: '张三',
+          sex: '男',
+          date_of_birth: '1982‐01‐01',
+          charge_type: '全费',
+          phone_number: '13812345678',
+          status: 1,
+          relationship: '0',
+        },
+      ],
+      pagination: { total: 46, pageSize: 10, current: 1 },
+    },
+    // });
+  },
+  'GET /api/patient/register': {
+    result_code: '',
+    error_message: '',
+    response_results: {
+      register_list: [
+        {
+          transact_no: '',
+          patient_id: '',
+          name: '',
+          visit_date: '',
+          visit_no: 123,
+          time_desc: '',
+          clinic_label: '',
+          clinic_type: '',
+          speciality_name: '',
+          charge_type: '',
+          sum_fee: 80,
+          serial_no: 2,
+          scheduled_time: '',
+          register_from: '',
+          register_status: 0,
+        },
+      ],
+      pagination: { total: 46, pageSize: 10, current: 1 },
+    },
+  },
   'POST /api/hospital/user/no': mockjs.mock({
     code: 200,
     'list|3': [
@@ -141,4 +147,9 @@ export default {
     ],
     pagination: { total: 46, pageSize: 10, current: 1 },
   }),
+  'POST /api/account/unbind_patient': {
+    result_code: '0',
+    error_message: '',
+    response_results: {},
+  },
 };

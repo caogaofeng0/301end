@@ -44,6 +44,7 @@ export default {
 
   reducers: {
     save(state, action) {
+      console.log(action.payload, 'action.payload----->');
       return {
         ...state,
         data: action.payload,
@@ -68,7 +69,6 @@ export default {
       };
     },
     changeEditDocStatusLoading(state) {
-      console.log('进入');
       return {
         ...state,
         editDocStatusLoading: !state.editDocStatusLoading,

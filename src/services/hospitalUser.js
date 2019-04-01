@@ -25,16 +25,16 @@ export async function hospitaluserList(params) {
   });
 }
 
-export async function hospitaluserBindList(params) {
-  return request('/api/hospital/user/Bind/list', {
-    method: 'POST',
-    body: {
-      ...params,
-    },
-  });
+export async function hospitalUserBindList(params) {
+  return request(`/api/account/patients?user_id=${params}`);
 }
+
 export async function hospitaluserBindListHistory(params) {
-  return request('/api/hospital/user/Bind/list/history', {
+  return request(`/api/patient/register?patient_id=${params}`);
+}
+
+export async function hospitaluserNo(params) {
+  return request('/api/hospital/user/no', {
     method: 'POST',
     body: {
       ...params,
@@ -42,8 +42,8 @@ export async function hospitaluserBindListHistory(params) {
   });
 }
 
-export async function hospitaluserNo(params) {
-  return request('/api/hospital/user/no', {
+export async function unbindPatient(params) {
+  return request('/api/account/unbind_patient', {
     method: 'POST',
     body: {
       ...params,

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage } from 'umi/locale';
-import { Spin, Tag, Icon, Avatar} from 'antd';
+import { Spin, Tag, Icon, Avatar } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import styles from './index.less';
@@ -60,11 +60,7 @@ export default class GlobalHeaderRight extends PureComponent {
   };
 
   render() {
-    const {
-      currentUser,
-      handleSignOut,
-      theme,
-    } = this.props;
+    const { currentUser, handleSignOut, theme } = this.props;
     let className = styles.right;
     if (theme === 'dark') {
       className = `${styles.right}  ${styles.dark}`;
@@ -74,16 +70,11 @@ export default class GlobalHeaderRight extends PureComponent {
         {currentUser.name ? (
           <div>
             <span className={`${styles.action} ${styles.account}`}>
-              <Avatar
-                size="small"
-                className={styles.avatar}
-                src={currentUser.avatar}
-                alt="avatar"
-              />
+              <Avatar size="small" className={styles.avatar} src="/favicon.png" alt="avatar" />
               <span className={styles.name}>{currentUser.name}</span>
             </span>
             <span className={`${styles.action} ${styles.account}`} onClick={handleSignOut}>
-              <Icon type="logout" style={{marginRight:5}} />
+              <Icon type="logout" style={{ marginRight: 5 }} />
               <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
             </span>
           </div>

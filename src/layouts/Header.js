@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { formatMessage } from 'umi/locale';
-import { Layout, message } from 'antd';
+import { Layout, Modal } from 'antd';
 import Animate from 'rc-animate';
 import { connect } from 'dva';
 import GlobalHeader from '@/components/GlobalHeader';
@@ -40,23 +39,17 @@ class HeaderView extends Component {
     return collapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)';
   };
 
-  handleNoticeClear = type => {
-    message.success(
-      `${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({
-        id: `component.globalHeader.${type}`,
-      })}`
-    );
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'global/clearNotices',
-      payload: type,
-    });
-  };
-
   handleSignOut = () => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'login/logout',
+    Modal.confirm({
+      title: '您确认退出吗?',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        dispatch({
+          type: 'login/logout',
+        });
+      },
     });
   };
 
@@ -111,7 +104,6 @@ class HeaderView extends Component {
             theme={navTheme}
             mode="horizontal"
             onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
             handleSignOut={this.handleSignOut}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
@@ -119,7 +111,6 @@ class HeaderView extends Component {
         ) : (
           <GlobalHeader
             onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
             handleSignOut={this.handleSignOut}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
@@ -135,11 +126,9 @@ class HeaderView extends Component {
   }
 }
 
-export default connect(({ user, global, setting, loading }) => ({
+export default connect(({ user, global, setting }) => ({
   currentUser: user.currentUser,
   collapsed: global.collapsed,
-  fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
-  fetchingNotices: loading.effects['global/fetchNotices'],
   notices: global.notices,
   setting,
 }))(HeaderView);

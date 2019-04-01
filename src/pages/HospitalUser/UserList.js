@@ -43,30 +43,34 @@ class UserList extends PureComponent {
 
   columns = [
     {
-      title: 'id',
+      title: '用户标识',
       dataIndex: 'name',
-      render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+      align: 'center',
     },
     {
       title: '用户姓名',
       dataIndex: 'owner',
+      align: 'center',
     },
     {
       title: '身份证号',
       dataIndex: 'updatedAt',
-      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      align: 'center',
     },
     {
       title: '电话号码',
       dataIndex: 'createdAt',
+      align: 'center',
     },
     {
       title: '创建时间',
       dataIndex: 'callNo',
+      align: 'center',
     },
     {
       title: '状态',
       dataIndex: 'status',
+      align: 'center',
       render: val => (
         <span className={classNames({ [styles.status]: val !== 0 })}>
           {val === 0 ? '正常' : '锁定'}
@@ -75,6 +79,7 @@ class UserList extends PureComponent {
     },
     {
       title: '操作',
+      align: 'center',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.bindUser(text, record)}>绑定的患者</a>
@@ -185,10 +190,6 @@ class UserList extends PureComponent {
     }, 100);
   };
 
-  previewItem = id => {
-    router.push(`/profile/basic/${id}`);
-  };
-
   handleFormReset = () => {
     const { form } = this.props;
     form.resetFields();
@@ -251,6 +252,7 @@ class UserList extends PureComponent {
             <FormItem label={null}>
               {getFieldDecorator('time')(
                 <DatePicker.RangePicker
+                  placeholder={['创建开始时间', '创建结束时间']}
                   initialValue={[
                     moment('2015/01/01', dateFormat),
                     moment('2015/01/01', dateFormat),
@@ -264,9 +266,9 @@ class UserList extends PureComponent {
             <FormItem label={null}>
               {getFieldDecorator('platform')(
                 <Select placeholder="请选择第三方平台id" initialValue="jack">
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
+                  <Option value="jack">01</Option>
+                  <Option value="lucy">02</Option>
+                  <Option value="tom">03</Option>
                 </Select>
               )}
             </FormItem>
@@ -292,9 +294,9 @@ class UserList extends PureComponent {
               <FormItem label={null}>
                 {getFieldDecorator('status')(
                   <Select placeholder="请选择状态" initialValue="jack">
-                    <Option value="jack">Jack</Option>
-                    <Option value="lucy">Lucy</Option>
-                    <Option value="tom">Tom</Option>
+                    <Option value="jack">是</Option>
+                    <Option value="lucy">否</Option>
+                    <Option value="tom">其他</Option>
                   </Select>
                 )}
               </FormItem>
@@ -343,7 +345,7 @@ class UserList extends PureComponent {
           ) : null}
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            // scroll={{ y: clientHeight - 370 }}
+            // scroll={{ x: '100%', y: clientHeight - 370 }}
             selectedRows={selectedRows}
             loading={loading}
             data={hospList}
