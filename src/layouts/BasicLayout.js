@@ -57,6 +57,25 @@ class BasicLayout extends React.Component {
       this.getClientHeight(tableHeight);
     });
     this.getClientHeight(tableHeight);
+    // 页面一段时间没有操作，退出登录
+    const EXPIRE_TIME = 1000 * 60 * 30;
+    let logoutTimer = '';
+    function logout() {
+      dispatch({
+        type: 'login/logout',
+      });
+    }
+    function setTime() {
+      logoutTimer = setTimeout(logout, EXPIRE_TIME);
+    }
+    setTime();
+    function userActionHandler() {
+      clearTimeout(logoutTimer);
+      setTime();
+    }
+    window.addEventListener('click', () => {
+      userActionHandler();
+    });
     dispatch({
       type: 'user/fetchCurrent',
     });
