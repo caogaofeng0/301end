@@ -22,7 +22,7 @@ class DoctorList extends PureComponent {
     {
       title: '医生姓名',
       width: 100,
-      dataIndex: 'owner',
+      dataIndex: 'doctor_name',
       align: 'center',
     },
     {
@@ -33,7 +33,7 @@ class DoctorList extends PureComponent {
     },
     {
       title: '特长',
-      dataIndex: 'content',
+      dataIndex: 'advantage',
       align: 'center',
     },
     {
@@ -49,11 +49,16 @@ class DoctorList extends PureComponent {
   ];
 
   componentDidMount() {
+    this.handleExpertDetails();
+  }
+
+  handleExpertDetails = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'info/fetch',
+      type: 'info/getExpertDetails',
+      payload: '',
     });
-  }
+  };
 
   /**
    * 编辑信息
@@ -167,12 +172,11 @@ class DoctorList extends PureComponent {
 
   render() {
     const {
-      info: { data, editDocStatus },
+      info: { expertDetailsList, editDocStatus },
       loading,
     } = this.props;
     const { ModalText } = this.state;
-    console.log(data, 'data-------->');
-
+    console.log(expertDetailsList, '医生');
     return (
       <Fragment>
         <EditDoc visibleStatus={editDocStatus} ModalText={ModalText} />
@@ -180,10 +184,10 @@ class DoctorList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
             <StandardTable
-              rowKey={record => record.id}
+              rowKey={record => record.doctor_name}
               selectedRows={[]}
               loading={loading}
-              data={data}
+              data={expertDetailsList}
               columns={this.columns}
               rowSelection={null}
               onChange={this.handleStandardTableChange}

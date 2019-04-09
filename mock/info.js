@@ -367,4 +367,84 @@ export default {
       },
     ],
   }),
+  'GET /api/speciality_category': mockjs.mock({
+    result_code: '',
+    error_message: '',
+    response_results: {
+      speciality_list: [
+        {
+          speciality_name: '内分泌科',
+          speciality_code: '0',
+        },
+        {
+          speciality_name: '消化内科',
+          speciality_code: '1',
+        },
+        {
+          speciality_name: '消化内科01',
+          speciality_code: '2',
+        },
+        {
+          speciality_name: '消化内科02',
+          speciality_code: '3',
+        },
+      ],
+    },
+  }),
+  'GET /api/speciality_profile': mockjs.mock({
+    result_code: '',
+    error_message: '',
+    response_results: {
+      speciality_code: '0978',
+      speciality_name: '内科',
+      speciality_desc: '内科内科内科',
+      leader_profile: '张磊',
+      advantage_list: [
+        {
+          item_no: '1',
+          advantage: '个性化手术治疗发育性髋关节脱位',
+          content: '详情',
+          doctor_list: [
+            {
+              doctor_id: '',
+              doctor_name: '章程',
+              order_no: '',
+            },
+            {
+              doctor_id: '',
+              doctor_name: '张磊明',
+              order_no: '',
+            },
+          ],
+        },
+      ],
+    },
+  }),
+
+  'GET /api/expert': mockjs.mock({
+    result_code: '',
+    error_message: '',
+    response_results: {
+      expert_list: [
+        {
+          doctor_id: '123',
+          order_no: '1234',
+          doctor_name: '张磊',
+          sex: '男',
+          title: '主治医师',
+          teaching: '教授',
+          tutor: '教授',
+          duty: '领导',
+          job: '领导',
+          speciality: '',
+          advantage: '',
+          academics: '',
+          research: '',
+          education: '',
+          award: '',
+          photo: '',
+        },
+      ],
+    },
+  }),
 };

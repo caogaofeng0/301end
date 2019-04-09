@@ -1,12 +1,14 @@
 import {
   userNoHistory,
   userBindHistory,
-  hospitaluserList,
+  userList,
   hospitalUserBindList,
   hospitaluserBindListHistory,
   hospitaluserNo,
   unbindPatient,
+  addBlackList,
 } from '@/services/hospitalUser';
+import { message } from 'antd';
 
 export default {
   namespace: 'hUser',
@@ -46,8 +48,22 @@ export default {
         payload: response,
       });
     },
+    *getAddBlackList({ payload, callback }, { call }) {
+      const response = yield call(addBlackList, payload);
+      if (response) {
+        callback();
+      }
+    },
+    *getRemoveBlackList({ payload, callback }, { call }) {
+      const response = yield call(addBlackList, payload);
+      if (response && response.result_code === '0') {
+        callback();
+      } else {
+        message.error(response.error_message);
+      }
+    },
     *getHospitalUserList({ payload }, { call, put }) {
-      const response = yield call(hospitaluserList, payload);
+      const response = yield call(userList, payload);
       yield put({
         type: 'saveHospitalUserList',
         payload: response,
@@ -85,6 +101,8 @@ export default {
       const response = yield call(unbindPatient, payload);
       if (response && response.result_code === '0') {
         callback();
+      } else {
+        message.error(response.error_message);
       }
     },
   },
@@ -121,7 +139,6 @@ export default {
       };
     },
     saveHospitaluserBindHistory(state, action) {
-      console.log(action.payload, '绑定历史');
       return {
         ...state,
         hospitaluserBindHistory: action.payload.response_results,

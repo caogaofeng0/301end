@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -23,7 +24,7 @@ class InfoDepart extends React.Component {
     // v 点击底部传入的值
     const { dispatch, form } = this.props;
     dispatch({
-      type: 'info/fetchDepartList',
+      type: 'info/getSpecialityCategory',
       payload: { ...form.getFieldsValue(), v },
     });
   };
@@ -76,9 +77,7 @@ class InfoDepart extends React.Component {
       match,
       location,
       children,
-      info: {
-        departList: { list },
-      },
+      info: { specialityCategory },
       global: { clientHeight },
       form: { getFieldDecorator },
     } = this.props;
@@ -92,7 +91,7 @@ class InfoDepart extends React.Component {
         tab: <span>科室医生</span>,
       },
     ];
-    console.log(location.pathname.replace(`${match.path}/`, ''), 'location.');
+    console.log(specialityCategory, 'specialityCategory.');
     return (
       <GridContent className={styles.userCenter}>
         <Row gutter={24}>
@@ -114,11 +113,11 @@ class InfoDepart extends React.Component {
                     onClick={this.handleClick}
                     style={{ height: clientHeight - 260 }}
                   >
-                    {list &&
-                      list.map(v => (
-                        <Menu.Item key={v.id}>
-                          <span>科室：{v.depart}</span>
-                          <span>输入码：{v.departCode}</span>
+                    {specialityCategory &&
+                      specialityCategory.map(v => (
+                        <Menu.Item key={v.speciality_code}>
+                          <span>科室：{v.speciality_name}</span>
+                          <span>输入码：{v.speciality_code}</span>
                         </Menu.Item>
                       ))}
                   </Menu>

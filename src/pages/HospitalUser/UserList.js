@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import classNames from 'classnames';
@@ -34,7 +35,7 @@ const { Option } = Select;
 @Form.create()
 class UserList extends PureComponent {
   state = {
-    expandForm: false,
+    expandForm: true,
     selectedRows: [],
     showStatus: false,
     currentPage: 1,
@@ -44,32 +45,32 @@ class UserList extends PureComponent {
   columns = [
     {
       title: '用户标识',
-      dataIndex: 'name',
+      dataIndex: 'user_id',
       align: 'center',
     },
     {
       title: '用户姓名',
-      dataIndex: 'owner',
+      dataIndex: 'user_name',
       align: 'center',
     },
     {
       title: '身份证号',
-      dataIndex: 'updatedAt',
+      dataIndex: 'document_no',
       align: 'center',
     },
     {
       title: '电话号码',
-      dataIndex: 'createdAt',
+      dataIndex: 'phone_number',
       align: 'center',
     },
     {
-      title: '创建时间',
-      dataIndex: 'callNo',
+      title: '创建时间（缺少字段）',
+      dataIndex: 'phone_number',
       align: 'center',
     },
     {
-      title: '状态',
-      dataIndex: 'status',
+      title: '状态（缺少字段）',
+      dataIndex: 'phone_number',
       align: 'center',
       render: val => (
         <span className={classNames({ [styles.status]: val !== 0 })}>
@@ -86,7 +87,7 @@ class UserList extends PureComponent {
           <Divider type="vertical" />
           <a onClick={() => this.noHistory(text, record)}>用户挂号记录</a>
           <Divider type="vertical" />
-          <a onClick={() => this.toggleStatus(text, record)}>
+          <a onClick={() => this.toggleUserStatus(text, record)}>
             {record && record.status === 0 ? '锁定' : '恢复'}
           </a>
         </Fragment>
@@ -101,11 +102,13 @@ class UserList extends PureComponent {
   getHospitalUser = () => {
     const { dispatch, form } = this.props;
     const { currentPage, pageSize } = this.state;
-    const params = {
-      ...form.getFieldsValue(),
-      currentPage,
-      pageSize,
-    };
+    // const params = {
+    //   ...form.getFieldsValue(),
+    //   currentPage,
+    //   pageSize,
+    // };
+    let params = form.getFieldsValue().id;
+    params = params === undefined ? '' : params;
     dispatch({
       type: 'hUser/getHospitalUserList',
       payload: params,
@@ -129,9 +132,9 @@ class UserList extends PureComponent {
   };
 
   /**
-   * 切换状态
+   * 切换用户正常或者锁定状态
    */
-  toggleStatus = (text, record) => {
+  toggleUserStatus = (text, record) => {
     const { status } = record;
     const name = status === 0 ? '锁定' : '恢复';
     const params = {
@@ -140,14 +143,26 @@ class UserList extends PureComponent {
       askSure: `你还要${name}吗？`,
       okText: `${name}`,
     };
-    confirmPopCon(params, record, this.handleStatusChange);
+    confirmPopCon(params, record, this.blackListStatusChange);
   };
 
-  handleStatusChange = () => {
+  blackListStatusChange = s => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'rule/listStatus',
-    });
+    const userId = { user_id: s.user_id };
+    // 用户状态 没有返回 用document_no 先代替
+    if (s.document_no === 0) {
+      dispatch({
+        type: 'hUser/getAddBlackList',
+        payload: userId,
+        callblack: this.getHospitalUser,
+      });
+    } else {
+      dispatch({
+        type: 'hUser/getRemoveBlackList',
+        payload: userId,
+        callblack: this.getHospitalUser,
+      });
+    }
   };
 
   /**
@@ -240,15 +255,15 @@ class UserList extends PureComponent {
   };
 
   renderAdvancedForm() {
-    const dateFormat = 'YYYY/MM/DD';
-    const { expandForm } = this.state;
+    // const dateFormat = 'YYYY/MM/DD';
+    // const { expandForm } = this.state;
     const {
       form: { getFieldDecorator },
     } = this.props;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24} style={{ height: 56 }}>
+          {/* <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('time')(
                 <DatePicker.RangePicker
@@ -261,8 +276,8 @@ class UserList extends PureComponent {
                 />
               )}
             </FormItem>
-          </Col>
-          <Col md={8} sm={24} style={{ height: 56 }}>
+          </Col> */}
+          {/* <Col md={8} sm={24} style={{ height: 56 }}>
             <FormItem label={null}>
               {getFieldDecorator('platform')(
                 <Select placeholder="请选择第三方平台id" initialValue="jack">
@@ -271,6 +286,11 @@ class UserList extends PureComponent {
                   <Option value="tom">03</Option>
                 </Select>
               )}
+            </FormItem>
+          </Col> */}
+          <Col md={8} sm={24}>
+            <FormItem label={null}>
+              {getFieldDecorator('id')(<Input placeholder="输入身份证号搜索" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -282,14 +302,14 @@ class UserList extends PureComponent {
                 <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
-                <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                {/* <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
                   {!expandForm ? '展开' : '收起'}
                   {!expandForm ? <Icon type="down" /> : <Icon type="up" />}
-                </a>
+                </a> */}
               </div>
             </div>
           </Col>
-          {expandForm ? (
+          {/* {expandForm ? (
             <Col md={8} sm={24}>
               <FormItem label={null}>
                 {getFieldDecorator('status')(
@@ -301,21 +321,21 @@ class UserList extends PureComponent {
                 )}
               </FormItem>
             </Col>
-          ) : null}
-          {expandForm ? (
+          ) : null} */}
+          {/* {expandForm ? (
             <Col md={8} sm={24}>
               <FormItem label={null}>
                 {getFieldDecorator('name')(<Input placeholder="输入姓名搜索" />)}
               </FormItem>
             </Col>
-          ) : null}
-          {expandForm ? (
+          ) : null} */}
+          {/* {expandForm ? (
             <Col md={8} sm={24}>
               <FormItem label={null}>
                 {getFieldDecorator('id')(<Input placeholder="输入身份证号搜索" />)}
               </FormItem>
             </Col>
-          ) : null}
+          ) : null} */}
         </Row>
       </Form>
     );
@@ -329,7 +349,7 @@ class UserList extends PureComponent {
     } = this.props;
     const { selectedRows, showStatus } = this.state;
     const hospList = {
-      list: hospitaluserList.list,
+      list: hospitaluserList.response_results,
       pagination: hospitaluserList.pagination,
     };
     return (
@@ -347,6 +367,7 @@ class UserList extends PureComponent {
           <StandardTable
             // scroll={{ x: '100%', y: clientHeight - 370 }}
             selectedRows={selectedRows}
+            rowKey={row => row.user_id}
             loading={loading}
             data={hospList}
             columns={this.columns}

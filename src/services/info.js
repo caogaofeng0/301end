@@ -23,6 +23,20 @@ export async function departInfoList(params) {
   });
 }
 
+// 查询门诊专科列表，也支持通过参数查询指定专类类别的门诊专科列表
+export async function specialityCategory(params) {
+  return request(`/api/speciality_category?category=${params}`);
+}
+
+// 指定专科的简介、特色技术、特色医生。此接口调用方式为定时获取
+export async function specialityProfile(params) {
+  return request(`/api/speciality_profile?speciality_code=${params}`);
+}
+// 专科的专家介绍
+export async function expertDetails(params) {
+  return request(`/api/expert?speciality_code=${params}`);
+}
+
 // export async function removeRule(params) {
 //   return request('/api/rule', {
 //     method: 'POST',

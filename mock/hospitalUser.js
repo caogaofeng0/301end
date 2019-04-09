@@ -47,25 +47,18 @@ export default {
     ],
     pagination: { total: 46, pageSize: 10, current: 1 },
   }),
-  'POST /api/hospital/user/list': mockjs.mock({
-    code: 200,
-    'list|3': [
+  'GET /api/account/user': mockjs.mock({
+    result_code: '',
+    error_message: '',
+    response_results: [
       {
-        'key|+1': 1,
-        href: 'https://ant.design',
-        avatar: [
-          'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-          'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-        ],
-        name: `301`,
-        title: `一个任务名称`,
-        owner: '曲丽丽',
-        desc: '这是一段描述',
-        callNo: '2019-09-09 06:07',
-        status: Math.floor(Math.random() * 10) % 4,
-        updatedAt: '412724199909094567',
-        createdAt: '15078907890',
-        progress: Math.ceil(Math.random() * 100),
+        user_id: '001',
+        login_name: '张磊',
+        phone_number: '15978907890',
+        email: 'tyu@136.com',
+        user_name: '张磊',
+        document_type: '身份证',
+        document_no: '412712123456785678',
       },
     ],
     pagination: { total: 46, pageSize: 10, current: 1 },
@@ -148,6 +141,16 @@ export default {
     pagination: { total: 46, pageSize: 10, current: 1 },
   }),
   'POST /api/account/unbind_patient': {
+    result_code: '0',
+    error_message: '',
+    response_results: {},
+  },
+  'POST /api/account/add_user_blacklist': {
+    result_code: '0',
+    error_message: '',
+    response_results: {},
+  },
+  'POST /api/account/remove_user_blacklist': {
     result_code: '0',
     error_message: '',
     response_results: {},

@@ -1,4 +1,11 @@
-import { getDoctorList, departInfo, departInfoList } from '@/services/info';
+import {
+  getDoctorList,
+  departInfo,
+  departInfoList,
+  specialityCategory,
+  expertDetails,
+  specialityProfile,
+} from '@/services/info';
 
 export default {
   namespace: 'info',
@@ -13,6 +20,9 @@ export default {
       abstract: '',
       leader: '',
     },
+    expertDetailsList: {},
+    specialityCategory: [],
+    specialityProfileList: {},
     editDocStatusLoading: false,
     departList: [],
     editDocStatus: false,
@@ -40,11 +50,31 @@ export default {
         payload: response,
       });
     },
+    *getSpecialityCategory({ payload }, { call, put }) {
+      const response = yield call(specialityCategory, payload);
+      yield put({
+        type: 'saveSpecialityCategory',
+        payload: response.response_results.speciality_list,
+      });
+    },
+    *getExpertDetails({ payload }, { call, put }) {
+      const response = yield call(expertDetails, payload);
+      yield put({
+        type: 'saveExpertDetails',
+        payload: response.response_results.expert_list,
+      });
+    },
+    *getSpecialityProfile({ payload }, { call, put }) {
+      const response = yield call(specialityProfile, payload);
+      yield put({
+        type: 'saveSpecialityProfile',
+        payload: response.response_results,
+      });
+    },
   },
 
   reducers: {
     save(state, action) {
-      console.log(action.payload, 'action.payload----->');
       return {
         ...state,
         data: action.payload,
@@ -72,6 +102,24 @@ export default {
       return {
         ...state,
         editDocStatusLoading: !state.editDocStatusLoading,
+      };
+    },
+    saveSpecialityCategory(state, action) {
+      return {
+        ...state,
+        specialityCategory: action.payload,
+      };
+    },
+    saveExpertDetails(state, action) {
+      return {
+        ...state,
+        expertDetailsList: action.payload,
+      };
+    },
+    saveSpecialityProfile(state, action) {
+      return {
+        ...state,
+        specialityProfileList: action.payload,
       };
     },
   },

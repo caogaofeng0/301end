@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/no-unused-state */
 import React, { Component, Fragment } from 'react';
 import { Card, Row, Col, Form, Input, Button } from 'antd';
@@ -20,14 +21,14 @@ class Depart extends Component {
   columns = [
     {
       title: '序号',
-      dataIndex: 'id',
+      dataIndex: 'item_no',
       width: 100,
       fixed: 'left',
       align: 'center',
     },
     {
-      title: '标题',
-      dataIndex: 'title',
+      title: '内容介绍',
+      dataIndex: 'advantage',
       align: 'center',
     },
     {
@@ -37,7 +38,8 @@ class Depart extends Component {
     },
     {
       title: '相关专家',
-      dataIndex: 'aboutBig',
+      dataIndex: 'doctor_list',
+      render: text => <span>{text.map(v => v.doctor_name).toString(',')}</span>,
       width: 100,
       fixed: 'right',
       align: 'center',
@@ -56,11 +58,11 @@ class Depart extends Component {
 
   componentDidMount() {
     this.getDepartDetails();
-    const { form } = this.props;
-    form.setFieldsValue({
-      depart: 'wzj',
-      departMan: '301',
-    });
+    // const { form } = this.props;
+    // form.setFieldsValue({
+    //   depart: 'wzj',
+    //   departMan: '301',
+    // });
   }
 
   handleDel = (text, record) => {
@@ -70,7 +72,7 @@ class Depart extends Component {
   getDepartDetails = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'info/fetchDepart',
+      type: 'info/getSpecialityProfile',
     });
   };
 
@@ -108,21 +110,24 @@ class Depart extends Component {
       },
     };
     const {
-      info: { depart },
+      info: { specialityProfileList },
       global: { clientHeight },
       form: { getFieldDecorator },
       loading,
     } = this.props;
-    const data = { list: depart.list, pagination: false };
+    const data = specialityProfileList && specialityProfileList.advantage_list;
+    const desc = specialityProfileList && specialityProfileList.speciality_desc;
+    const profile = specialityProfileList && specialityProfileList.leader_profile;
+    console.log(data, 'data--->');
     return (
       <Fragment>
         <Card bordered={false} bodyStyle={{ padding: 0 }} className={styles.departBody}>
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
             <Form.Item label="学科简介：">
-              {getFieldDecorator('depart')(<Input disabled />)}
+              {getFieldDecorator('depart', { initialValue: desc })(<Input disabled />)}
             </Form.Item>
             <Form.Item label="学科带头人：">
-              {getFieldDecorator('departMan')(<Input disabled />)}
+              {getFieldDecorator('departMan', { initialValue: profile })(<Input disabled />)}
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
@@ -143,7 +148,7 @@ class Depart extends Component {
             <Col>
               <StandardTable
                 loading={loading}
-                rowKey={record => record.id}
+                rowKey={record => record.item_no}
                 selectedRows={[]}
                 //  loading={loading}
                 data={data}
