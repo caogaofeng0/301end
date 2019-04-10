@@ -91,7 +91,6 @@ class InfoDepart extends React.Component {
         tab: <span>科室医生</span>,
       },
     ];
-    console.log(specialityCategory, 'specialityCategory.');
     return (
       <GridContent className={styles.userCenter}>
         <Row gutter={24}>

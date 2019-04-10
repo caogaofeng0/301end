@@ -30,6 +30,7 @@ class Depart extends Component {
       title: '内容介绍',
       dataIndex: 'advantage',
       align: 'center',
+      width: 200,
     },
     {
       title: '内容介绍',
@@ -39,7 +40,11 @@ class Depart extends Component {
     {
       title: '相关专家',
       dataIndex: 'doctor_list',
-      render: text => <span>{text.map(v => v.doctor_name).toString(',')}</span>,
+      render: text => (
+        <Fragment>
+          <span>{text.map(v => v.doctor_name).toString(',')}</span>
+        </Fragment>
+      ),
       width: 100,
       fixed: 'right',
       align: 'center',
@@ -115,10 +120,13 @@ class Depart extends Component {
       form: { getFieldDecorator },
       loading,
     } = this.props;
-    const data = specialityProfileList && specialityProfileList.advantage_list;
+    const data = {
+      list: specialityProfileList && specialityProfileList.advantage_list,
+      pagination: '',
+    };
     const desc = specialityProfileList && specialityProfileList.speciality_desc;
     const profile = specialityProfileList && specialityProfileList.leader_profile;
-    console.log(data, 'data--->');
+    console.log(data, '特殊--->');
     return (
       <Fragment>
         <Card bordered={false} bodyStyle={{ padding: 0 }} className={styles.departBody}>

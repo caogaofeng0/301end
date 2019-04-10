@@ -20,12 +20,14 @@ export default {
       abstract: '',
       leader: '',
     },
-    expertDetailsList: {},
+    expertDetailsList: [],
     specialityCategory: [],
     specialityProfileList: {},
     editDocStatusLoading: false,
     departList: [],
     editDocStatus: false,
+    isEditDoc: false,
+    editDocDetails: {},
   },
 
   effects: {
@@ -92,10 +94,17 @@ export default {
         departList: action.payload,
       };
     },
-    changeEditDocStatus(state) {
+    changeEditDocStatus(state, action) {
       return {
         ...state,
         editDocStatus: !state.editDocStatus,
+        isEditDoc: action.payload,
+      };
+    },
+    changeEditDocDetails(state, action) {
+      return {
+        ...state,
+        editDocDetails: action.payload,
       };
     },
     changeEditDocStatusLoading(state) {

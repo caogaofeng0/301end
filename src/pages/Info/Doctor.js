@@ -61,12 +61,17 @@ class DoctorList extends PureComponent {
   };
 
   /**
-   * 编辑信息
+   * 编辑医生信息
    */
-  handDoctorInfo = () => {
+  handDoctorInfo = t => {
     const { dispatch } = this.props;
     dispatch({
       type: 'info/changeEditDocStatus',
+      payload: true,
+    });
+    dispatch({
+      type: 'info/changeEditDocDetails',
+      payload: t,
     });
   };
 
@@ -109,6 +114,10 @@ class DoctorList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'info/changeEditDocStatus',
+    });
+    dispatch({
+      type: 'info/changeEditDocDetails',
+      payload: {},
     });
   };
 
@@ -176,7 +185,7 @@ class DoctorList extends PureComponent {
       loading,
     } = this.props;
     const { ModalText } = this.state;
-    console.log(expertDetailsList, '医生');
+    const data = { list: expertDetailsList || [], pagination: false };
     return (
       <Fragment>
         <EditDoc visibleStatus={editDocStatus} ModalText={ModalText} />
@@ -187,7 +196,7 @@ class DoctorList extends PureComponent {
               rowKey={record => record.doctor_name}
               selectedRows={[]}
               loading={loading}
-              data={expertDetailsList}
+              data={data}
               columns={this.columns}
               rowSelection={null}
               onChange={this.handleStandardTableChange}
