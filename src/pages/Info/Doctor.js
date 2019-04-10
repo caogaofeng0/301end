@@ -14,7 +14,7 @@ const FormItem = Form.Item;
 @Form.create()
 class DoctorList extends PureComponent {
   state = {
-    formValues: {},
+    // formValues: {},
     ModalText: '301',
   };
 
@@ -52,11 +52,11 @@ class DoctorList extends PureComponent {
     this.handleExpertDetails();
   }
 
-  handleExpertDetails = () => {
+  handleExpertDetails = params => {
     const { dispatch } = this.props;
     dispatch({
       type: 'info/getExpertDetails',
-      payload: '',
+      payload: params,
     });
   };
 
@@ -75,39 +75,25 @@ class DoctorList extends PureComponent {
     });
   };
 
-  handleStatusChange = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'rule/listStatus',
-    });
-  };
-
+  // eslint-disable-next-line no-unused-vars
   handleStandardTableChange = pagination => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      // ...filters,
-    };
+    // const { dispatch } = this.props;
+    // const { formValues } = this.state;
+    // const params = {
+    //   currentPage: pagination.current,
+    //   pageSize: pagination.pageSize,
+    //   ...formValues,
+    //   // ...filters,
+    // };
 
-    dispatch({
-      type: 'rule/fetch',
-      payload: params,
-    });
+    this.handleExpertDetails();
   };
 
+  // 重置
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
-    this.setState({
-      formValues: {},
-    });
-    dispatch({
-      type: 'rule/fetch',
-      payload: {},
-    });
+    this.handleExpertDetails();
   };
 
   handleAddDoctor = () => {
@@ -121,24 +107,13 @@ class DoctorList extends PureComponent {
     });
   };
 
+  // 查询医生
   handleSearch = e => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
+    const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      const values = {
-        ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
-      };
-
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'rule/fetch',
-        payload: values,
-      });
+      this.handleExpertDetails(fieldsValue.doctor_name);
     });
   };
 
@@ -152,7 +127,7 @@ class DoctorList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={12} sm={24}>
             <FormItem label={null}>
-              {getFieldDecorator('name')(<Input placeholder="输入姓名搜索" />)}
+              {getFieldDecorator('doctor_name')(<Input placeholder="输入姓名搜索" />)}
             </FormItem>
           </Col>
           <Col md={12} sm={24}>

@@ -26,7 +26,6 @@ export default {
     editDocStatusLoading: false,
     departList: [],
     editDocStatus: false,
-    isEditDoc: false,
     editDocDetails: {},
   },
 
@@ -94,11 +93,10 @@ export default {
         departList: action.payload,
       };
     },
-    changeEditDocStatus(state, action) {
+    changeEditDocStatus(state) {
       return {
         ...state,
         editDocStatus: !state.editDocStatus,
-        isEditDoc: action.payload,
       };
     },
     changeEditDocDetails(state, action) {

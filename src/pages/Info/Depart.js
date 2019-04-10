@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable react/no-unused-state */
 import React, { Component, Fragment } from 'react';
 import { Card, Row, Col, Form, Input, Button } from 'antd';
@@ -16,6 +15,7 @@ class Depart extends Component {
   state = {
     currentPage: 1,
     pageSize: 10,
+    editStatus: true,
   };
 
   columns = [
@@ -63,11 +63,6 @@ class Depart extends Component {
 
   componentDidMount() {
     this.getDepartDetails();
-    // const { form } = this.props;
-    // form.setFieldsValue({
-    //   depart: 'wzj',
-    //   departMan: '301',
-    // });
   }
 
   handleDel = (text, record) => {
@@ -78,6 +73,13 @@ class Depart extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'info/getSpecialityProfile',
+    });
+  };
+
+  handleEdit = () => {
+    const { editStatus } = this.state;
+    this.setState({
+      editStatus: !editStatus,
     });
   };
 
@@ -122,23 +124,25 @@ class Depart extends Component {
     } = this.props;
     const data = {
       list: specialityProfileList && specialityProfileList.advantage_list,
-      pagination: '',
+      pagination: false,
     };
     const desc = specialityProfileList && specialityProfileList.speciality_desc;
     const profile = specialityProfileList && specialityProfileList.leader_profile;
-    console.log(data, '特殊--->');
+    const { editStatus } = this.state;
     return (
       <Fragment>
         <Card bordered={false} bodyStyle={{ padding: 0 }} className={styles.departBody}>
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
             <Form.Item label="学科简介：">
-              {getFieldDecorator('depart', { initialValue: desc })(<Input disabled />)}
+              {getFieldDecorator('depart', { initialValue: desc })(<Input disabled={editStatus} />)}
             </Form.Item>
             <Form.Item label="学科带头人：">
-              {getFieldDecorator('departMan', { initialValue: profile })(<Input disabled />)}
+              {getFieldDecorator('departMan', { initialValue: profile })(
+                <Input disabled={editStatus} />
+              )}
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" onClick={this.handleEdit}>
                 编辑
               </Button>
               <Button type="primary" htmlType="submit" style={{ marginLeft: 20 }}>
@@ -158,7 +162,6 @@ class Depart extends Component {
                 loading={loading}
                 rowKey={record => record.item_no}
                 selectedRows={[]}
-                //  loading={loading}
                 data={data}
                 columns={this.columns}
                 rowSelection={null}
