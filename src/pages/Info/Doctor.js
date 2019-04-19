@@ -1,26 +1,28 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Card, Form, Input, Button } from 'antd';
+import { Row, Col, Card, Form, Input, Button, message } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import EditDoc from './EditDoc';
 import styles from './Doctor.less';
 
 const FormItem = Form.Item;
 
-@connect(({ info, loading }) => ({
+@connect(({ info, loading, global }) => ({
   info,
+  global,
   loading: loading.models.info,
 }))
 @Form.create()
 class DoctorList extends PureComponent {
   state = {
-    // formValues: {},
+    handleSearch: false,
+    handleSearchData: [],
     ModalText: '301',
   };
 
   columns = [
     {
-      title: '医生姓名',
+      title: '姓名',
       width: 100,
       dataIndex: 'doctor_name',
       align: 'center',
@@ -32,13 +34,14 @@ class DoctorList extends PureComponent {
       align: 'center',
     },
     {
-      title: '特长',
+      title: '特长简介',
       dataIndex: 'advantage',
       align: 'center',
     },
     {
       title: '操作',
       width: 100,
+      fixed: 'right',
       align: 'center',
       render: (text, record) => (
         <Fragment>
@@ -49,55 +52,87 @@ class DoctorList extends PureComponent {
   ];
 
   componentDidMount() {
-    this.handleExpertDetails();
+    // this.handleExpertDetails();
   }
 
-  handleExpertDetails = params => {
+  handleExpertDetails = () => {
     const { dispatch } = this.props;
     dispatch({
       type: 'info/getExpertDetails',
-      payload: params,
+      payload: '',
     });
   };
 
   /**
-   * 编辑医生信息
+   * 编辑信息
    */
   handDoctorInfo = t => {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      info: { expertKey },
+    } = this.props;
     dispatch({
       type: 'info/changeEditDocStatus',
-      payload: true,
     });
     dispatch({
       type: 'info/changeEditDocDetails',
       payload: t,
     });
+    dispatch({
+      type: 'info/saveUploadHeader',
+      payload: {
+        user_id: t.doctor_id,
+        name: t.doctor_name,
+      },
+    });
+    dispatch({
+      type: 'info/getDoctorImgList',
+      payload: {
+        code: expertKey,
+        id: t.doctor_id,
+      },
+    });
+    // dispatch({
+    //   type:'info/saveFileList',
+    //   payload:[{
+    //     uid:'-1',
+    //     name:t.photo,
+    //     status:'done',
+    //     url:'http://C:/Users/Administrator/Desktop/weiyi/301end/301end/301end/public/favicon.png'
+    //   }]
+    // })
   };
 
-  // eslint-disable-next-line no-unused-vars
-  handleStandardTableChange = pagination => {
-    // const { dispatch } = this.props;
-    // const { formValues } = this.state;
-    // const params = {
-    //   currentPage: pagination.current,
-    //   pageSize: pagination.pageSize,
-    //   ...formValues,
-    //   // ...filters,
-    // };
+  // saveGetDoctoreImg = () => {
 
-    this.handleExpertDetails();
+  // }
+
+  handleStatusChange = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'rule/listStatus',
+    });
   };
 
-  // 重置
   handleFormReset = () => {
     const { form } = this.props;
     form.resetFields();
-    this.handleExpertDetails();
+    this.setState({
+      handleSearch: false,
+      handleSearchData: [],
+    });
   };
 
+  // 新增医生
   handleAddDoctor = () => {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      info: { expertKey },
+    } = this.props;
+    if (!expertKey) {
+      message.info('请选择科室');
+      return;
+    }
     dispatch({
       type: 'info/changeEditDocStatus',
     });
@@ -105,15 +140,30 @@ class DoctorList extends PureComponent {
       type: 'info/changeEditDocDetails',
       payload: {},
     });
+    dispatch({
+      type: 'info/saveUploadHeader',
+      payload: {},
+    });
+    dispatch({
+      type: 'info/saveFileList',
+      payload: [],
+    });
   };
 
-  // 查询医生
   handleSearch = e => {
     e.preventDefault();
-    const { form } = this.props;
+    const {
+      info: { expertDetailsList },
+      form,
+    } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      this.handleExpertDetails(fieldsValue.doctor_name);
+      const { name } = fieldsValue;
+      const handleSearchData = expertDetailsList.filter(v => v.doctor_name.includes(name));
+      this.setState({
+        handleSearch: true,
+        handleSearchData,
+      });
     });
   };
 
@@ -127,7 +177,7 @@ class DoctorList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={12} sm={24}>
             <FormItem label={null}>
-              {getFieldDecorator('doctor_name')(<Input placeholder="输入姓名搜索" />)}
+              {getFieldDecorator('name')(<Input placeholder="输入姓名搜索" />)}
             </FormItem>
           </Col>
           <Col md={12} sm={24}>
@@ -150,17 +200,17 @@ class DoctorList extends PureComponent {
     );
   }
 
-  handleEditModal = e => {
-    console.log(e, '-------->ed');
-  };
-
   render() {
     const {
       info: { expertDetailsList, editDocStatus },
       loading,
+      global: { clientHeight },
     } = this.props;
-    const { ModalText } = this.state;
-    const data = { list: expertDetailsList || [], pagination: false };
+    const { ModalText, handleSearch, handleSearchData } = this.state;
+    const data = {
+      list: handleSearch ? handleSearchData : expertDetailsList || [],
+      pagination: false,
+    };
     return (
       <Fragment>
         <EditDoc visibleStatus={editDocStatus} ModalText={ModalText} />
@@ -168,14 +218,14 @@ class DoctorList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
             <StandardTable
-              rowKey={record => record.doctor_name}
+              scroll={{ x: '150%', y: clientHeight - 330 }}
               selectedRows={[]}
+              rowKey={record => record.doctor_name}
               loading={loading}
               data={data}
               columns={this.columns}
               rowSelection={null}
-              onChange={this.handleStandardTableChange}
-              // styles={{height: "80%", minHeight: 500}}
+              className={styles.doctorTable}
             />
           </div>
         </Card>

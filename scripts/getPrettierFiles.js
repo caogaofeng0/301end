@@ -1,5 +1,4 @@
 const glob = require('glob');
-
 const getPrettierFiles = () => {
   let files = [];
   const jsFiles = glob.sync('src/**/*.js*', { ignore: ['**/node_modules/**', 'build/**'] });

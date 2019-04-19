@@ -1,5 +1,5 @@
 {
-  "name": "301",
+  "name": "ant-design-pro",
   "version": "2.2.1",
   "description": "An out-of-box UI solution for enterprise applications",
   "private": true,
@@ -34,10 +34,9 @@
     "@antv/data-set": "^0.10.1",
     "@babel/runtime": "^7.3.1",
     "antd": "^3.13.0",
-    "bizcharts": "^3.4.3",
-    "bizcharts-plugin-slider": "^2.1.1-beta.1",
     "classnames": "^2.2.6",
     "dva": "^2.4.1",
+    "crypto-js": "3.1.9",
     "echarts": "^4.2.1",
     "echarts-for-react": "^2.0.15-beta.0",
     "enquire-js": "^0.2.1",

@@ -1,32 +1,29 @@
-/* eslint-disable no-unused-vars */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import router from 'umi/router';
 import Link from 'umi/link';
 import { Breadcrumb } from 'antd';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import BreadcrumbCon from './BreadcrumbCon';
 import styles from './UserList.less';
 /* eslint react/no-multi-comp:0 */
 @connect(({ hUser, loading }) => ({
   hUser,
-  loading: loading.models.rule,
+  loading: loading.models.hUser,
 }))
 class User extends PureComponent {
-  componentDidMount() {
-    const { match } = this.props;
-    router.push(match.url);
-  }
-
   render() {
-    const { match, children, location } = this.props;
+    const {
+      children,
+      location,
+      hUser: { bindUser, patientUser },
+    } = this.props;
     const urlArr = location && location.pathname.slice(1).split('/');
     const analyUrl = () => {
       // eslint-disable-next-line no-nested-ternary
       return urlArr.includes('bindhistory') ? (
-        <Link to="/hospitalUser/userlist/bindUser">绑定的患者(用户：张三/001)</Link>
+        <Link to="/hospitalUser/userlist/bindUser">
+          绑定的患者{bindUser.user_name}/{bindUser.user_id}
+        </Link>
       ) : urlArr.includes('bindUser') ? (
-        '绑定的患者(用户：张三/001)'
+        `绑定的患者${bindUser.user_name}/${bindUser.user_id}`
       ) : null;
     };
     return (
@@ -45,7 +42,9 @@ class User extends PureComponent {
           </Breadcrumb.Item>
           <Breadcrumb.Item>{analyUrl()}</Breadcrumb.Item>
           {urlArr.includes('bindhistory') ? (
-            <Breadcrumb.Item>患者挂号记录(用户：张三/001)(患者：张小弟/x001)</Breadcrumb.Item>
+            <Breadcrumb.Item>
+              患者挂号记录{patientUser.name}/{patientUser.patient_id}
+            </Breadcrumb.Item>
           ) : null}
         </Breadcrumb>
         {children}

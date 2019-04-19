@@ -1,31 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import classNames from 'classnames';
-import moment from 'moment';
 import router from 'umi/router';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Button,
-  Divider,
-  DatePicker,
-  Select,
-  Icon,
-  Table,
-} from 'antd';
+import { Row, Col, Card, Form, Input, Button, Divider, Table } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import confirmPopCon from './confirmPopCon';
 import UserNoModal from './UserNoModal';
 import styles from './UserList.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
 
-/* eslint react/no-multi-comp:0 */
 @connect(({ rule, hUser, loading, global }) => ({
   hUser,
   rule,
@@ -36,51 +20,55 @@ const { Option } = Select;
 class UserList extends PureComponent {
   state = {
     expandForm: true,
-    selectedRows: [],
     showStatus: false,
-    currentPage: 1,
-    pageSize: 10,
   };
 
   columns = [
     {
       title: '用户标识',
       dataIndex: 'user_id',
+      width: 100,
       align: 'center',
     },
     {
       title: '用户姓名',
       dataIndex: 'user_name',
+      width: 100,
       align: 'center',
     },
     {
       title: '身份证号',
       dataIndex: 'document_no',
+      width: 200,
       align: 'center',
     },
     {
       title: '电话号码',
       dataIndex: 'phone_number',
+      width: 100,
       align: 'center',
     },
     {
-      title: '创建时间（缺少字段）',
-      dataIndex: 'phone_number',
+      title: '创建时间',
+      dataIndex: 'create_time',
+      width: 200,
       align: 'center',
     },
     {
-      title: '状态（缺少字段）',
-      dataIndex: 'phone_number',
+      title: '状态',
+      dataIndex: 'status',
       align: 'center',
-      render: val => (
-        <span className={classNames({ [styles.status]: val !== 0 })}>
-          {val === 0 ? '正常' : '锁定'}
+      render: text => (
+        <span className={classNames(text === '0' ? styles.status : {})}>
+          {text === '1' ? '正常' : '锁定'}
         </span>
       ),
     },
     {
       title: '操作',
       align: 'center',
+      width: 250,
+      fixed: 'right',
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.bindUser(text, record)}>绑定的患者</a>
@@ -88,7 +76,7 @@ class UserList extends PureComponent {
           <a onClick={() => this.noHistory(text, record)}>用户挂号记录</a>
           <Divider type="vertical" />
           <a onClick={() => this.toggleUserStatus(text, record)}>
-            {record && record.status === 0 ? '锁定' : '恢复'}
+            {record && record.status === '1' ? '锁定' : '恢复'}
           </a>
         </Fragment>
       ),
@@ -96,19 +84,12 @@ class UserList extends PureComponent {
   ];
 
   componentDidMount() {
-    this.getHospitalUser();
+    // this.getHospitalUser();
   }
 
   getHospitalUser = () => {
     const { dispatch, form } = this.props;
-    const { currentPage, pageSize } = this.state;
-    // const params = {
-    //   ...form.getFieldsValue(),
-    //   currentPage,
-    //   pageSize,
-    // };
-    let params = form.getFieldsValue().id;
-    params = params === undefined ? '' : params;
+    const params = form.getFieldsValue().id;
     dispatch({
       type: 'hUser/getHospitalUserList',
       payload: params,
@@ -136,7 +117,7 @@ class UserList extends PureComponent {
    */
   toggleUserStatus = (text, record) => {
     const { status } = record;
-    const name = status === 0 ? '锁定' : '恢复';
+    const name = status === '1' ? '锁定' : '恢复';
     const params = {
       title: `你正在进行用户${name}操作`,
       content: `用户${name}后，${name === '锁定' ? '将不可使用' : '将恢复正常使用'},`,
@@ -149,33 +130,19 @@ class UserList extends PureComponent {
   blackListStatusChange = s => {
     const { dispatch } = this.props;
     const userId = { user_id: s.user_id };
-    // 用户状态 没有返回 用document_no 先代替
-    if (s.document_no === 0) {
+    if (s.status === '1') {
       dispatch({
         type: 'hUser/getAddBlackList',
         payload: userId,
-        callblack: this.getHospitalUser,
+        callback: this.getHospitalUser,
       });
     } else {
       dispatch({
         type: 'hUser/getRemoveBlackList',
         payload: userId,
-        callblack: this.getHospitalUser,
+        callback: this.getHospitalUser,
       });
     }
-  };
-
-  /**
-   * 解绑
-   */
-  unbind = (text, record) => {
-    const params = {
-      title: '你正在进行用户与患者绑定关系解除操作。',
-      content: '解除绑定后，用户不能为就诊人挂号,',
-      askSure: '你还要解除关系吗？',
-      okText: '确定',
-    };
-    confirmPopCon(params, record, this.getUnbinde);
   };
 
   /**
@@ -184,25 +151,11 @@ class UserList extends PureComponent {
   bindUser = v => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'hUser/saveID',
-      payload: v.name,
+      type: 'hUser/saveBindUser',
+      // payload: v.user_id,
+      payload: { ...v, user_id: 721 },
     });
     router.push('/hospitalUser/userlist/bindUser');
-  };
-
-  getUnbinde = record => {
-    // eslint-disable-next-line no-console
-    console.log(record, '------------>');
-  };
-
-  handleStandardTableChange = pagination => {
-    this.setState({
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-    });
-    setTimeout(() => {
-      this.getHospitalUser();
-    }, 100);
   };
 
   handleFormReset = () => {
@@ -249,11 +202,6 @@ class UserList extends PureComponent {
     });
   };
 
-  expandedRowsChange = (expanded, record) => {
-    // eslint-disable-next-line no-console
-    console.log(expanded, record, 'expandedRowsChange');
-  };
-
   renderAdvancedForm() {
     // const dateFormat = 'YYYY/MM/DD';
     // const { expandForm } = this.state;
@@ -293,13 +241,13 @@ class UserList extends PureComponent {
               {getFieldDecorator('id')(<Input placeholder="输入身份证号搜索" />)}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={16} sm={24}>
             <div style={{ overflow: 'hidden', float: 'right' }}>
               <div style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
                 {/* <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -344,13 +292,15 @@ class UserList extends PureComponent {
   render() {
     const {
       loading,
-      // global: { clientHeight },
+      global: { clientHeight },
       hUser: { hospitaluserList },
     } = this.props;
-    const { selectedRows, showStatus } = this.state;
+    const { showStatus } = this.state;
+    // eslint-disable-next-line compat/compat
+    const hUList = Object.values(hospitaluserList).length > 0 ? [hospitaluserList] : [];
     const hospList = {
-      list: hospitaluserList.response_results,
-      pagination: hospitaluserList.pagination,
+      list: hUList,
+      pagination: false,
     };
     return (
       <Card bordered={false}>
@@ -365,18 +315,16 @@ class UserList extends PureComponent {
           ) : null}
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            // scroll={{ x: '100%', y: clientHeight - 370 }}
-            selectedRows={selectedRows}
+            scroll={{ x: '120%', y: clientHeight }}
+            selectedRows={[]}
             rowKey={row => row.user_id}
             loading={loading}
             data={hospList}
             columns={this.columns}
             rowSelection={null}
-            expandedRowRender={record =>
-              this.expandedRowRender(record.updatedAt, record.updatedAt, record.updatedAt)
-            }
-            onExpand={this.expandedRowsChange}
-            onChange={this.handleStandardTableChange}
+            // expandedRowRender={record =>
+            // this.expandedRowRender(record.updatedAt, record.updatedAt, record.updatedAt)
+            // }
           />
         </div>
       </Card>

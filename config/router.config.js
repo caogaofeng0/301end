@@ -15,7 +15,7 @@ export default [
     Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/business/no' },
+      { path: '/', redirect: '/hospitalUser/userlist' },
       // business
       {
         path: '/business',

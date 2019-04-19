@@ -1,6 +1,6 @@
 import fetch from 'dva/fetch';
+import CryptoJS from 'crypto-js';
 import { notification } from 'antd';
-import router from 'umi/router';
 import hash from 'hash.js';
 import { isAntdPro } from './utils';
 
@@ -64,6 +64,25 @@ const cachedSave = (response, hashcode) => {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, option) {
+  const appID = 'WEDOCTOR';
+  const appKey = '29A9D4F75A7F48DE';
+  const timestamp = Math.floor(new Date().getTime() / 1000);
+  const randomNum = Math.floor(Math.random() * 1000);
+  const signAture = CryptoJS.MD5(appKey + timestamp + randomNum)
+    .toString()
+    .toUpperCase('');
+  const headerOps = {
+    app_id: appID,
+    app_key: appKey,
+    timestamp,
+    random: randomNum,
+    signature: signAture,
+    user_id: '721',
+    assess_token: '',
+  };
+  if (option && option.institution_id) {
+    headerOps.institution_id = option.institution_id;
+  }
   const options = {
     expirys: isAntdPro(),
     ...option,
@@ -80,6 +99,9 @@ export default function request(url, option) {
 
   const defaultOptions = {
     credentials: 'include',
+    headers: {
+      ...headerOps,
+    },
   };
   const newOptions = { ...defaultOptions, ...options };
   if (
@@ -137,19 +159,6 @@ export default function request(url, option) {
         window.g_app._store.dispatch({
           type: 'login/logout',
         });
-        return;
-      }
-      // environment should not be used
-      if (status === 403) {
-        router.push('/exception/403');
-        return;
-      }
-      if (status <= 504 && status >= 500) {
-        router.push('/exception/500');
-        return;
-      }
-      if (status >= 404 && status < 422) {
-        router.push('/exception/404');
       }
     });
 }

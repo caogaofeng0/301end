@@ -58,30 +58,30 @@ class BasicLayout extends React.Component {
     });
     this.getClientHeight(tableHeight);
     // 页面一段时间没有操作，退出登录
-    const EXPIRE_TIME = 1000 * 60 * 30;
-    let logoutTimer = '';
-    function logout() {
-      dispatch({
-        type: 'login/logout',
-      });
-    }
-    function setTime() {
-      logoutTimer = setTimeout(logout, EXPIRE_TIME);
-    }
-    setTime();
-    function userActionHandler() {
-      clearTimeout(logoutTimer);
-      setTime();
-    }
-    window.addEventListener('click', () => {
-      userActionHandler();
-    });
-    dispatch({
-      type: 'user/fetchCurrent',
-    });
-    dispatch({
-      type: 'setting/getSetting',
-    });
+    // const EXPIRE_TIME = 1000 * 60 * 30;
+    // let logoutTimer = '';
+    // function logout() {
+    //   dispatch({
+    //     type: 'login/logout',
+    //   });
+    // }
+    // function setTime() {
+    //   logoutTimer = setTimeout(logout, EXPIRE_TIME);
+    // }
+    // setTime();
+    // function userActionHandler() {
+    //   clearTimeout(logoutTimer);
+    //   setTime();
+    // }
+    // window.addEventListener('click', () => {
+    //   userActionHandler();
+    // });
+    // dispatch({
+    //   type: 'user/fetchCurrent',
+    // });
+    // dispatch({
+    //   type: 'setting/getSetting',
+    // });
     dispatch({
       type: 'menu/getMenuData',
       payload: { routes, authority },
@@ -108,7 +108,7 @@ class BasicLayout extends React.Component {
     const { fixSiderbar, isMobile, collapsed, layout } = this.props;
     if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
       return {
-        paddingLeft: collapsed ? '80px' : '256px',
+        paddingLeft: collapsed ? '80px' : '200px',
       };
     }
     return null;
@@ -154,6 +154,7 @@ class BasicLayout extends React.Component {
             onCollapse={this.handleMenuCollapse}
             menuData={menuData}
             isMobile={isMobile}
+            width="20px"
             {...this.props}
           />
         )}

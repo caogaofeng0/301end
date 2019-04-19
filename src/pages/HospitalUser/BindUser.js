@@ -1,19 +1,13 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-unused-state */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
 import router from 'umi/router';
-import { Row, Col, Card, Form, Button, Divider, Select, Input } from 'antd';
+import { Row, Col, Card, Form, Button, Divider, Select } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import confirmPopCon from './confirmPopCon';
 import styles from './BindUser.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
-
-/* eslint react/no-multi-comp:0 */
+const centerID = '600004';
 @connect(({ hUser, loading, global }) => ({
   hUser,
   global,
@@ -21,38 +15,30 @@ const { Option } = Select;
 }))
 @Form.create()
 class BindUser extends PureComponent {
-  state = {
-    expandForm: false,
-    selectedRows: [],
-    formValues: {},
-    currentPage: 1,
-    pageSize: 10,
-  };
-
   columns = [
     {
       title: '门诊号',
       dataIndex: 'patient_id',
       align: 'center',
+      width: 100,
     },
     {
       title: '与用户关系',
       dataIndex: 'relationship',
       align: 'center',
+      width: 150,
+      render: text => <span>{text === '0' ? '本人' : '其他'}</span>,
     },
     {
       title: '绑定时间',
-      dataIndex: 'date_of_birth',
+      dataIndex: 'bind_time',
       align: 'center',
-    },
-    {
-      title: '医学中心名称',
-      dataIndex: 'charge_type',
-      align: 'center',
+      width: 150,
     },
     {
       title: '操作',
       align: 'center',
+      width: 250,
       render: (text, record) => (
         <Fragment>
           <a onClick={() => this.unbind(text, record)}>解除绑定</a>
@@ -64,21 +50,14 @@ class BindUser extends PureComponent {
   ];
 
   componentDidMount() {
-    this.getUserBind();
+    this.getUserBind({ institution_id: centerID });
   }
 
-  getUserBind = () => {
-    const { dispatch, form, hUser } = this.props;
-    const { currentPage, pageSize } = this.state;
-    const params = {
-      ...form.getFieldsValue(),
-      currentPage,
-      pageSize,
-      ID: hUser.bindId,
-    };
+  getUserBind = v => {
+    const { dispatch, hUser } = this.props;
     dispatch({
       type: 'hUser/getHospitalUserBind',
-      payload: params,
+      payload: { data: hUser.bindUser.user_id, ...v },
     });
   };
 
@@ -96,34 +75,20 @@ class BindUser extends PureComponent {
   };
 
   getUnbinde = record => {
-    const { dispatch } = this.props;
+    const { dispatch, hUser } = this.props;
     // eslint-disable-next-line camelcase
-    const { user_id, patient_id } = record;
+    const { patient_id } = record;
     dispatch({
       type: 'hUser/getUnbindPatient',
-      payload: { user_id, patient_id },
+      payload: { user_id: hUser.bindUser.user_id, patient_id },
       callback: this.getUserBind,
     });
   };
 
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    this.setState({
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-    });
-    setTimeout(() => {
-      this.getUserBind();
-    }, 100);
-  };
-
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
-    setTimeout(() => {
-      this.getUserBind();
-    }, 100);
+    this.getUserBind({ institution_id: centerID });
   };
 
   /**
@@ -131,29 +96,21 @@ class BindUser extends PureComponent {
    */
   // eslint-disable-next-line no-unused-vars
   noHistory = (text, record) => {
-    //  const {showStatus} = this.state;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'hUser/savePatientID',
+      payload: text,
+    });
     router.push('/hospitalUser/userlist/bindhistory');
-  };
-
-  hideNoModal = () => {
-    this.setState({
-      showStatus: false,
-    });
-  };
-
-  handleNoModal = () => {
-    this.setState({
-      showStatus: false,
-    });
   };
 
   handleSearch = e => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
+    const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
-      this.getUserBind();
+      const { center } = fieldsValue;
+      this.getUserBind({ institution_id: center });
     });
   };
 
@@ -166,29 +123,29 @@ class BindUser extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }} className={styles.bindUserRow}>
           <Col md={8} sm={24}>
             <FormItem label={null}>
-              {getFieldDecorator('center')(
+              {getFieldDecorator('center', {
+                initialValue: '600004',
+              })(
                 <Select placeholder="请选择医学中心">
-                  <Select.Option value="one">第一中心医院</Select.Option>
-                  <Select.Option value="two">第二中心医院</Select.Option>
-                  <Select.Option value="three">第三中心医院</Select.Option>
-                  <Select.Option value="four">第四中心医院</Select.Option>
-                  <Select.Option value="five">第五中心医院</Select.Option>
+                  <Select.Option value="600004">第一医学中心(301)</Select.Option>
+                  <Select.Option value="690057">第三医学中心(武总)</Select.Option>
+                  <Select.Option value="600024">第四医学中心(304)</Select.Option>
+                  <Select.Option value="600023">第五医学中心(302)</Select.Option>
+                  <Select.Option value="600003">第五医学中心(307)</Select.Option>
+                  <Select.Option value="600038">第六医学中心(海总)</Select.Option>
+                  <Select.Option value="600089">第七医学中心(陆总)</Select.Option>
+                  <Select.Option value="600025">第八医学中心(309)</Select.Option>
                 </Select>
               )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24} style={{ height: 56 }}>
-            <FormItem label={null}>
-              {getFieldDecorator('num')(<Input placeholder="输入门诊号搜索" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
+          <Col md={16} sm={24}>
             <div style={{ overflow: 'hidden', float: 'right' }}>
               <div style={{ marginBottom: 24 }}>
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                <Button style={{ marginLeft: 20 }} onClick={this.handleFormReset}>
                   重置
                 </Button>
               </div>
@@ -205,29 +162,25 @@ class BindUser extends PureComponent {
       loading,
       global: { clientHeight },
     } = this.props;
-    const { selectedRows, showStatus } = this.state;
     const hospList = {
       list: hospitaluserBind.patient_list,
-      pagination: hospitaluserBind.pagination,
+      pagination: false,
     };
     return (
-      // <PageHeaderWrapper title={null}>
       <Card bordered={false}>
         <div className={styles.tableList}>
           <div className={styles.tableListForm}>{this.renderAdvancedForm()}</div>
           <StandardTable
-            // scroll={{ y: clientHeight - 425 }}
-            rowKey={rowKey => rowKey.document_no}
+            scroll={{ y: clientHeight - 425 }}
+            rowKey={rowKey => rowKey.patient_id}
             selectedRows={[]}
             loading={loading}
             data={hospList}
             columns={this.columns}
             rowSelection={null}
-            onChange={this.handleStandardTableChange}
           />
         </div>
       </Card>
-      // </PageHeaderWrapper>
     );
   }
 }

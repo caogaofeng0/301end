@@ -1,8 +1,9 @@
 import { routerRedux } from 'dva/router';
-import { stringify } from 'qs';
-import { fakeAccountLogin } from '@/services/api';
+import { message } from 'antd';
+import { accountLogin } from '@/services/user';
 import { setAuthority } from '@/utils/authority';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { pagePath } from '@/pagePath';
 
 export default {
   namespace: 'login',
@@ -12,17 +13,27 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(accountLogin, payload);
+      if (response.result_code !== '0') {
+        message.error(response.error_message);
+        return;
+      }
+      window.localStorage.setItem('user', response.response_results.Name);
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: {
+          status: true,
+          currentAuthority: 'user',
+          type: 'account',
+        },
       });
-      if (response.status === 'ok') {
-        window.location.href = '/';
+      if (response.result_code === '0') {
+        window.location.href = `${pagePath}/`;
       }
     },
 
     *logout(_, { put }) {
+      window.localStorage.clear('user');
       yield put({
         type: 'changeLoginStatus',
         payload: {
@@ -34,9 +45,6 @@ export default {
       yield put(
         routerRedux.replace({
           pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
         })
       );
     },

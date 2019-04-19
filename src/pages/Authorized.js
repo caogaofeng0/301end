@@ -21,13 +21,19 @@ function AuthComponent({ children, location, routerData, status }) {
     });
     return authorities;
   };
-  return (
+  const isUserLogin = () => {
+    return window.localStorage.getItem('user');
+    // return true
+  };
+  return isUserLogin() ? (
     <Authorized
       authority={getRouteAuthority(location.pathname, routerData)}
       noMatch={isLogin ? <Redirect to="/exception/403" /> : <Redirect to="/user/login" />}
     >
       {children}
     </Authorized>
+  ) : (
+    <Redirect to="/user/login" />
   );
 }
 export default connect(({ menu: menuModel, login: loginModel }) => ({

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable camelcase */
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Button, Form, Input, Select, DatePicker, Row, Col } from 'antd';
@@ -15,70 +15,88 @@ const { Option } = Select;
 @Form.create()
 class UserNoModal extends Component {
   state = {
-    // eslint-disable-next-line react/no-unused-state
-    currentPage: 1,
-    // eslint-disable-next-line react/no-unused-state
-    pageSize: 10,
+    handleSearch: false,
+    handleSearchData: [],
   };
 
   columns = [
     {
       title: '挂号时间',
-      dataIndex: 'time',
-      render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+      dataIndex: 'registering_date',
+      align: 'center',
     },
     {
       title: '就诊时间',
-      dataIndex: 'time2',
+      dataIndex: 'visit_date',
+      align: 'center',
     },
     {
       title: '门诊号',
-      dataIndex: 'phone',
-      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      dataIndex: 'patient_id',
+      align: 'center',
     },
     {
       title: '与用户关系',
-      dataIndex: 'title',
+      dataIndex: 'agency_relationship',
+      align: 'center',
     },
     {
       title: '号别',
-      dataIndex: 'signature',
+      dataIndex: 'clinic_label',
+      align: 'center',
     },
     {
       title: '缴费方式',
-      dataIndex: 'group',
+      dataIndex: 'card_type',
+      align: 'center',
     },
     {
       title: '挂号途径',
-      dataIndex: 'address',
+      dataIndex: 'operator_no',
+      align: 'center',
     },
   ];
 
-  componentWillMount() {
+  componentDidMount() {
     this.getUserNo();
   }
 
   getUserNo = () => {
-    const { dispatch, form, hUser } = this.props;
-    const { currentPage, pageSize } = this.state;
+    const { dispatch, hUser } = this.props;
     const params = {
-      ...form.getFieldsValue(),
-      currentPage,
-      pageSize,
       ID: hUser.bindId,
     };
     dispatch({
-      type: 'hUser/getHospitalUserNo',
+      type: 'hUser/getUserNoHistory',
       payload: params,
     });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    const { form } = this.props;
-    form.validateFieldsAndScroll(err => {
+    const {
+      form,
+      hUser: { data },
+    } = this.props;
+    form.validateFieldsAndScroll((err, fieldsValue) => {
       if (err) return;
-      this.getUserNo();
+      const isBetween = (v, t) => moment(v).isBetween(t[0], t[1]);
+      const { registering_date, visit_date, name, operator_no } = fieldsValue;
+      const A =
+        !registering_date || registering_date.length <= 0
+          ? data
+          : data.filter(v => isBetween(v.registering_date, registering_date));
+      const B =
+        !visit_date || visit_date.length <= 0
+          ? A
+          : A.filter(v => isBetween(v.visit_date, visit_date));
+      const C = name === undefined ? B : B.filter(v => v.patient_id.includes(name));
+      const handleSearchData =
+        operator_no === undefined ? C : C.filter(v => v.operator_no.includes(operator_no));
+      this.setState({
+        handleSearch: true,
+        handleSearchData,
+      });
     });
   };
 
@@ -94,90 +112,73 @@ class UserNoModal extends Component {
   handleFormReset = () => {
     const { form } = this.props;
     form.resetFields();
-    this.getUserNo();
-  };
-
-  handleStandardTableChange = pagination => {
     this.setState({
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
+      handleSearch: false,
+      handleSearchData: [],
     });
-    setTimeout(() => {
-      this.getUserNo();
-    }, 100);
   };
 
   render() {
     const {
       showStatus,
-      confirmLoading,
-      handleNoModal,
       hideNoModal,
       form: { getFieldDecorator },
-      hUser: { hospitaluserNo },
+      hUser: { data },
       loading,
     } = this.props;
+    const { handleSearch, handleSearchData } = this.state;
     const hospList = {
-      list: hospitaluserNo.list,
-      pagination: hospitaluserNo.pagination,
+      list: handleSearch ? handleSearchData : data || [],
+      pagination: false,
     };
-    console.log('进入渲染', hospList);
+
     return (
       <div>
         <Modal
           title="用户挂号记录"
           visible={showStatus}
-          onOk={handleNoModal}
-          confirmLoading={confirmLoading}
           onCancel={hideNoModal}
+          footer={null}
           width="80%"
         >
           <Form onSubmit={this.handleSubmit}>
-            <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-              <Col md={8} sm={24}>
+            <Row gutter={{ md: 2, lg: 6, xl: 12 }}>
+              <Col md={6} sm={24}>
                 <Form.Item>
-                  {getFieldDecorator('noTime')(
+                  {getFieldDecorator('registering_date')(
                     <RangePicker
-                      initialValue={[
-                        moment('2015/01/01', dateFormat),
-                        moment('2015/01/01', dateFormat),
-                      ]}
+                      placeholder={['选择挂号开始时间', '选择挂号结束时间']}
                       format={dateFormat}
                     />
                   )}
                 </Form.Item>
               </Col>
-              <Col md={8} sm={24}>
+              <Col md={6} sm={24}>
                 <Form.Item>
-                  {getFieldDecorator('askTime')(
+                  {getFieldDecorator('visit_date')(
                     <RangePicker
-                      initialValue={[
-                        moment('2015/01/01', dateFormat),
-                        moment('2015/01/01', dateFormat),
-                      ]}
+                      placeholder={['选择就诊开始时间', '选择就诊结束时间']}
                       format={dateFormat}
                     />
                   )}
                 </Form.Item>
               </Col>
-              <Col md={8} sm={24}>
+              <Col md={3} sm={204}>
                 <Form.Item>
-                  {getFieldDecorator('departNo')(<Input placeholder="请输入您的姓名!" />)}
+                  {getFieldDecorator('name')(<Input placeholder="请输入门诊号!" />)}
                 </Form.Item>
               </Col>
-              <Col md={8} sm={24}>
+              <Col md={4} sm={24}>
                 <Form.Item>
-                  {getFieldDecorator('work')(
+                  {getFieldDecorator('operator_no')(
                     <Select placeholder="请选择挂号途径">
-                      <Option value="jack">Jack</Option>
-                      <Option value="lucy">Lucy</Option>
-                      <Option value="disabled">Disabled</Option>
-                      <Option value="Yiminghe">yiminghe</Option>
+                      <Option value="微信">微信</Option>
+                      <Option value="微医">微医</Option>
                     </Select>
                   )}
                 </Form.Item>
               </Col>
-              <Col md={8} sm={24}>
+              <Col md={4} sm={24}>
                 <Form.Item>
                   <div style={{ overflow: 'hidden', float: 'right' }}>
                     <div style={{ marginBottom: 24 }}>
@@ -200,7 +201,6 @@ class UserNoModal extends Component {
             data={hospList}
             columns={this.columns}
             rowSelection={null}
-            onChange={this.handleStandardTableChange}
           />
         </Modal>
       </div>

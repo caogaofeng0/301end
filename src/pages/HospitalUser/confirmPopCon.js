@@ -9,11 +9,11 @@ export default function ConfirmPopCon(options, record, onHandCon) {
     okText: options.okText,
     content: (
       <div>
-        <p style={{color:'#f81d22'}}>{options.content}</p>
+        <p style={{ color: '#f81d22' }}>{options.content}</p>
         <p>{options.askSure}</p>
       </div>
     ),
-    onOk:() => onHandCon(record),
+    onOk: () => onHandCon(record),
     onCancel() {},
-  })
+  });
 }

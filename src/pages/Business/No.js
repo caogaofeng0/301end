@@ -29,7 +29,7 @@ class Analysis extends Component {
   componentDidMount() {
     // const { dispatch } = this.props;
     this.reqRef = requestAnimationFrame(() => {
-      this.getFetch();
+      // this.getFetch();
     });
   }
 
@@ -43,8 +43,6 @@ class Analysis extends Component {
 
   getFetch = () => {
     const { dispatch } = this.props;
-    // const { approver, time} = this.state
-    console.log('getFetch');
     dispatch({
       type: 'business/topData',
       payload: this.state,
@@ -113,10 +111,6 @@ class Analysis extends Component {
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      // const values = {
-      //   ...fieldsValue,
-      // };
-      console.log({ ...fieldsValue });
       this.setState({
         ...fieldsValue,
       });

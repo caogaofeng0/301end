@@ -7,3 +7,9 @@ export async function query() {
 export async function queryCurrent() {
   return request('/api/currentUser');
 }
+export async function accountLogin(params) {
+  return request('/mob301/api/manage', {
+    method: 'POST',
+    body: params,
+  });
+}

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage } from 'umi/locale';
-import { Spin, Tag, Icon, Avatar } from 'antd';
+import { Spin, Tag, Icon } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import styles from './index.less';
@@ -60,18 +60,19 @@ export default class GlobalHeaderRight extends PureComponent {
   };
 
   render() {
-    const { currentUser, handleSignOut, theme } = this.props;
+    const { handleSignOut, theme } = this.props;
+    const currentUser = window.localStorage.getItem('user');
     let className = styles.right;
     if (theme === 'dark') {
       className = `${styles.right}  ${styles.dark}`;
     }
     return (
       <div className={className}>
-        {currentUser.name ? (
+        {currentUser ? (
           <div>
             <span className={`${styles.action} ${styles.account}`}>
-              <Avatar size="small" className={styles.avatar} src="/favicon.png" alt="avatar" />
-              <span className={styles.name}>{currentUser.name}</span>
+              {/* /<Avatar size="small" className={styles.avatar} src="/favicon.png" alt="avatar" /> */}
+              <span className={styles.name}>{currentUser}</span>
             </span>
             <span className={`${styles.action} ${styles.account}`} onClick={handleSignOut}>
               <Icon type="logout" style={{ marginRight: 5 }} />

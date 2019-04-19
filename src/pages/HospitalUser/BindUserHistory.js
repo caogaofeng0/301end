@@ -1,11 +1,8 @@
-/* eslint-disable no-unused-vars */
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import router from 'umi/router';
 import { Row, Col, Card, Form, Button, DatePicker, Select } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import styles from './UserList.less';
 
 const dateFormat = 'YYYY/MM/DD';
@@ -13,7 +10,6 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-/* eslint react/no-multi-comp:0 */
 @connect(({ hUser, loading, global }) => ({
   hUser,
   global,
@@ -22,15 +18,13 @@ const { RangePicker } = DatePicker;
 @Form.create()
 class BindUserHistory extends PureComponent {
   state = {
-    selectedRows: [],
-    formValues: {},
-    currentPage: 1,
-    pageSize: 10,
+    handleSearch: false,
+    handleSearchData: [],
   };
 
   columns = [
     {
-      title: '就诊时间',
+      title: '就诊日期',
       dataIndex: 'visit_date',
       align: 'center',
     },
@@ -46,7 +40,7 @@ class BindUserHistory extends PureComponent {
     },
     {
       title: '身份',
-      dataIndex: 'clinic_type',
+      dataIndex: 'identity',
       align: 'center',
     },
     {
@@ -55,7 +49,7 @@ class BindUserHistory extends PureComponent {
       align: 'center',
     },
     {
-      title: '第三方平台',
+      title: '挂号途径',
       dataIndex: 'register_from',
       align: 'center',
     },
@@ -66,46 +60,46 @@ class BindUserHistory extends PureComponent {
   }
 
   getUserBindHistory = () => {
-    const { dispatch, form, hUser } = this.props;
-    const { currentPage, pageSize } = this.state;
-    const params = {
-      ...form.getFieldsValue(),
-      currentPage,
-      pageSize,
-      ID: hUser.bindId,
-    };
+    const { dispatch, hUser } = this.props;
     dispatch({
       type: 'hUser/getHospitalUserBindHistory',
-      payload: params,
+      payload: hUser.patientUser.patient_id,
     });
-  };
-
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    this.setState({
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-    });
-    setTimeout(() => {
-      this.getUserBindHistory();
-    }, 100);
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form } = this.props;
     form.resetFields();
-    setTimeout(() => {
-      this.getUserBindHistory();
-    }, 100);
+    this.setState({
+      handleSearch: false,
+      handleSearchData: [],
+    });
   };
 
-  handleSearch = e => {
+  handleSearchCon = e => {
     e.preventDefault();
-    const { dispatch, form } = this.props;
-    form.validateFields(err => {
+    const {
+      form,
+      hUser: {
+        // eslint-disable-next-line camelcase
+        hospitaluserBindHistory: { register_list },
+      },
+    } = this.props;
+    form.validateFields((err, val) => {
       if (err) return;
-      this.getUserBindHistory();
+      const { date, platform } = val;
+      const fiterDate =
+        date && date.length > 0
+          ? register_list.filter(v => moment(v.visit_date).isBetween(date[0], date[1]))
+          : // eslint-disable-next-line camelcase
+            register_list;
+      const handleSearchData = platform
+        ? fiterDate.filter(v => v.register_from === platform)
+        : fiterDate;
+      this.setState({
+        handleSearch: true,
+        handleSearchData,
+      });
     });
   };
 
@@ -114,19 +108,12 @@ class BindUserHistory extends PureComponent {
       form: { getFieldDecorator },
     } = this.props;
     return (
-      <Form onSubmit={this.handleSearch} layout="inline">
+      <Form onSubmit={this.handleSearchCon} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label={null}>
-              {getFieldDecorator('center')(
-                <RangePicker
-                  placeholder={['就诊开始日期', '就诊结束日期']}
-                  initialValue={[
-                    moment('2015/01/01', dateFormat),
-                    moment('2015/01/01', dateFormat),
-                  ]}
-                  format={dateFormat}
-                />
+              {getFieldDecorator('date')(
+                <RangePicker placeholder={['就诊开始日期', '就诊结束日期']} format={dateFormat} />
               )}
             </FormItem>
           </Col>
@@ -134,9 +121,9 @@ class BindUserHistory extends PureComponent {
             <FormItem label={null}>
               {getFieldDecorator('platform')(
                 <Select placeholder="请选择第三方平台" initialValue="">
-                  <Option value="jack">微医</Option>
-                  <Option value="lucy">微信</Option>
-                  <Option value="tom">其他</Option>
+                  <Option value="微医">微医</Option>
+                  <Option value="微信">微信</Option>
+                  <Option value="窗口">窗口</Option>
                 </Select>
               )}
             </FormItem>
@@ -162,14 +149,11 @@ class BindUserHistory extends PureComponent {
     const {
       hUser: { hospitaluserBindHistory },
       loading,
-      global: { clientHeight },
     } = this.props;
-    const { selectedRows } = this.state;
-    // eslint-disable-next-line no-console
-    console.log(hospitaluserBindHistory, '进入渲染');
+    const { handleSearch, handleSearchData } = this.state;
     const bindHistroy = {
-      list: hospitaluserBindHistory.register_list,
-      pagination: hospitaluserBindHistory.pagination,
+      list: handleSearch ? handleSearchData : hospitaluserBindHistory.register_list,
+      pagination: false,
     };
 
     return (
@@ -180,12 +164,11 @@ class BindUserHistory extends PureComponent {
           <StandardTable
             // scroll={{ y: clientHeight - 370 }}
             rowKey={rowKey => rowKey.visit_no}
-            selectedRows={selectedRows}
+            selectedRows={[]}
             loading={loading}
             data={bindHistroy}
             columns={this.columns}
             rowSelection={null}
-            onChange={this.handleStandardTableChange}
           />
         </div>
       </Card>

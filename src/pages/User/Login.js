@@ -17,7 +17,7 @@ class LoginPage extends Component {
     e.preventDefault();
     const { dispatch, form } = this.props;
     const val = { ...form.getFieldsValue() };
-    if (!val.userName) {
+    if (!val.login_name) {
       message.warning('账号不能为空');
       return false;
     }
@@ -28,8 +28,7 @@ class LoginPage extends Component {
     dispatch({
       type: 'login/login',
       payload: {
-        ...form.getFieldsValue(),
-        type: 'account',
+        ...val,
       },
     });
   };
@@ -45,7 +44,7 @@ class LoginPage extends Component {
     return (
       <div className={styles.main}>
         <div className={styles.mainLogn}>
-          <img src="/logo_301.png" alt="301" />
+          <img src="./logo_301.png" alt="301" />
           <span>解放军总医院管理系统</span>
         </div>
         <div className={styles.mainLogin}>
@@ -54,7 +53,7 @@ class LoginPage extends Component {
             <Row gutter={{ md: 4, lg: 4, xl: 4 }}>
               <Col md={24} sm={24}>
                 <FormItem label={null}>
-                  {getFieldDecorator('userName')(<Input placeholder="账号" />)}
+                  {getFieldDecorator('login_name')(<Input placeholder="账号" />)}
                 </FormItem>
               </Col>
             </Row>

@@ -27,7 +27,7 @@ class User extends Component {
 
   componentDidMount() {
     this.reqRef = requestAnimationFrame(() => {
-      this.getFetch();
+      // this.getFetch();
     });
   }
 
@@ -43,7 +43,6 @@ class User extends Component {
     const { dispatch } = this.props;
     // const { approver, time} = this.state
     // eslint-disable-next-line no-console
-    console.log('getFetch');
     dispatch({
       type: 'business/noTrendFetch',
     });
@@ -111,11 +110,6 @@ class User extends Component {
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      // const values = {
-      //   ...fieldsValue,
-      // };
-      // eslint-disable-next-line no-console
-      console.log({ ...fieldsValue });
       this.setState({
         ...fieldsValue,
       });

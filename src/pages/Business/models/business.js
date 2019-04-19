@@ -22,7 +22,6 @@ export default {
   effects: {
     // 挂号统计
     *topData({ payload }, { call, put }) {
-      console.log(payload, 'payload');
       const response = yield call(businessNoGetData, payload);
       yield put({
         type: 'saveTopData',

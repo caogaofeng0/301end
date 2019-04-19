@@ -7,55 +7,54 @@ import {
   hospitaluserNo,
   unbindPatient,
   addBlackList,
+  removeBlackList,
 } from '@/services/hospitalUser';
 import { message } from 'antd';
+import moment from 'moment';
 
 export default {
   namespace: 'hUser',
   state: {
-    data: {
-      list: [],
-      pagination: {},
-    },
-    bindData: {
-      list: [],
-      pagination: {},
-    },
-    hospitaluserList: {
-      list: [],
-      pagination: {},
-    },
-    hospitaluserBind: {
-      list: [],
-      pagination: {},
-    },
-    hospitaluserBindHistory: {
-      list: [],
-      pagination: {},
-    },
+    data: [],
+    bindData: {},
+    hospitaluserList: {},
+    hospitaluserBind: {},
+    hospitaluserBindHistory: {},
     hospitaluserNo: {
       list: [],
       pagination: {},
     },
-    bindId: '',
+    bindUser: {},
+    patientUser: {},
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *getUserNoHistory({ payload }, { call, put }) {
       const response = yield call(userNoHistory, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      if (response && response.result_code === '0') {
+        const data = response.response_results.register_list;
+        const sortFun = a => (a ? -1 : 1);
+        const sortDate = data.sort((a, b) =>
+          sortFun(moment(a.registering_date).isBefore(b.registering_date))
+        );
+        yield put({
+          type: 'save',
+          payload: sortDate,
+        });
+      } else {
+        message.error(response.error_message);
+      }
     },
     *getAddBlackList({ payload, callback }, { call }) {
       const response = yield call(addBlackList, payload);
-      if (response) {
+      if (response && response.result_code === '0') {
         callback();
+      } else {
+        message.error(response.error_message);
       }
     },
     *getRemoveBlackList({ payload, callback }, { call }) {
-      const response = yield call(addBlackList, payload);
+      const response = yield call(removeBlackList, payload);
       if (response && response.result_code === '0') {
         callback();
       } else {
@@ -64,6 +63,10 @@ export default {
     },
     *getHospitalUserList({ payload }, { call, put }) {
       const response = yield call(userList, payload);
+      if (response.result_code !== '0') {
+        message.error(response.error_message);
+        return;
+      }
       yield put({
         type: 'saveHospitalUserList',
         payload: response,
@@ -71,6 +74,10 @@ export default {
     },
     *getHospitalUserBind({ payload }, { call, put }) {
       const response = yield call(hospitalUserBindList, payload);
+      if (response.result_code !== '0') {
+        message.error(response.error_message);
+        return;
+      }
       yield put({
         type: 'saveHospitaluserBind',
         payload: response,
@@ -120,16 +127,22 @@ export default {
         bindData: action.payload,
       };
     },
-    saveID(state, action) {
+    saveBindUser(state, action) {
       return {
         ...state,
-        bindId: action.payload,
+        bindUser: action.payload,
+      };
+    },
+    savePatientID(state, action) {
+      return {
+        ...state,
+        patientUser: action.payload,
       };
     },
     saveHospitalUserList(state, action) {
       return {
         ...state,
-        hospitaluserList: action.payload,
+        hospitaluserList: action.payload.response_results,
       };
     },
     saveHospitaluserBind(state, action) {

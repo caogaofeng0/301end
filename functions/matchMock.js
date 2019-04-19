@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const pathToRegexp = require('path-to-regexp');
 const bodyParser = require('body-parser');
 

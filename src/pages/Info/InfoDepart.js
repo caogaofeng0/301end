@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
-import { Card, Row, Col, Input, Form, Radio, Menu } from 'antd';
+import { Card, Row, Col, Input, Form, Radio, Menu, Spin } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from './InfoDepart.less';
 
@@ -14,18 +14,28 @@ const FormItem = Form.Item;
 }))
 @Form.create()
 class InfoDepart extends React.Component {
-  state = {};
+  state = {
+    handleSearch: false,
+    handleSearchData: [],
+  };
 
   componentDidMount() {
-    this.getDepartList();
+    this.getSpecialityCategoryList();
+    this.getDepartList('10');
   }
 
+  getSpecialityCategoryList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'info/getSpecialityCategoryList',
+    });
+  };
+
   getDepartList = v => {
-    // v 点击底部传入的值
-    const { dispatch, form } = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'info/getSpecialityCategory',
-      payload: { ...form.getFieldsValue(), v },
+      payload: v,
     });
   };
 
@@ -43,33 +53,62 @@ class InfoDepart extends React.Component {
     }
   };
 
+  handleExpertDetails = v => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'info/getExpertDetails',
+      payload: v,
+    });
+  };
+
   saveInputRef = input => {
     this.input = input;
   };
 
   handleSubmit = e => {
-    const { form } = this.props;
+    const {
+      form,
+      info: { specialityCategory },
+    } = this.props;
     e.preventDefault();
-    form.validateFieldsAndScroll(err => {
+    form.validateFieldsAndScroll((err, fieldsValue) => {
       if (err) return;
-      this.getDepartList();
+      const { name } = fieldsValue;
+      const handleSearchData =
+        name === undefined || ''
+          ? specialityCategory
+          : specialityCategory.filter(v => v.input_code.includes(name.toLocaleUpperCase()));
+      this.setState({
+        handleSearch: true,
+        handleSearchData,
+      });
     });
   };
 
   handleClick = e => {
-    console.log('click ', e);
     const { dispatch } = this.props;
-    // 调用详情
     dispatch({
-      type: 'info/fetchDepart',
+      type: 'info/getSpecialityProfile',
+      payload: e.key,
     });
-    // this.getDepartList(depart)
+    dispatch({
+      type: 'info/saveExpertKey',
+      payload: e.key,
+    });
+    dispatch({
+      type: 'info/getDoctors',
+      payload: e.key,
+    });
+    this.handleExpertDetails(e.key);
   };
 
   getDepart = e => {
-    console.log('radio ', e.target.value);
     const depart = e.target.value;
     this.getDepartList(depart);
+    this.setState({
+      handleSearch: false,
+      handleSearchData: [],
+    });
   };
 
   render() {
@@ -77,10 +116,11 @@ class InfoDepart extends React.Component {
       match,
       location,
       children,
-      info: { specialityCategory },
+      info: { specialityCategory, specialityCategoryList, specialityCategoryLoading },
       global: { clientHeight },
       form: { getFieldDecorator },
     } = this.props;
+    const { handleSearch, handleSearchData } = this.state;
     const operationTabList = [
       {
         key: '/info',
@@ -91,45 +131,55 @@ class InfoDepart extends React.Component {
         tab: <span>科室医生</span>,
       },
     ];
+    const sCategory = handleSearch ? handleSearchData : specialityCategory;
     return (
       <GridContent className={styles.userCenter}>
         <Row gutter={24}>
           <Col lg={7} md={24}>
             <Card bordered={false} style={{ marginBottom: 24, height: clientHeight - 70 }}>
               <Form
-                onSubmit={this.handleSubmit}
+                // onSubmit={this.handleSubmit}
                 hideRequiredMark
                 style={{ marginTop: 8, height: '10%' }}
               >
                 <FormItem>
-                  {getFieldDecorator('name')(<Input placeholder="输入关键字搜索" />)}
+                  {getFieldDecorator('name')(
+                    <Input
+                      placeholder="输入关键字搜索"
+                      onChange={this.handleSubmit}
+                      onPressEnter={this.handleSubmit}
+                    />
+                  )}
                 </FormItem>
                 <div className={styles.infoItem}>
-                  <Menu
-                    theme="light"
-                    mode="inline"
-                    // defaultSelectedKeys={['1']}
-                    onClick={this.handleClick}
-                    style={{ height: clientHeight - 260 }}
-                  >
-                    {specialityCategory &&
-                      specialityCategory.map(v => (
-                        <Menu.Item key={v.speciality_code}>
-                          <span>科室：{v.speciality_name}</span>
-                          <span>输入码：{v.speciality_code}</span>
-                        </Menu.Item>
-                      ))}
-                  </Menu>
+                  <Spin spinning={specialityCategoryLoading}>
+                    <Menu
+                      theme="light"
+                      mode="inline"
+                      onClick={this.handleClick}
+                      style={{ height: clientHeight - 260 }}
+                    >
+                      {sCategory &&
+                        sCategory.map(v => (
+                          <Menu.Item key={v.speciality_code}>
+                            <span>科室名称：{v.speciality_name}</span>
+                            <span>输入码：{v.input_code}</span>
+                          </Menu.Item>
+                        ))}
+                    </Menu>
+                  </Spin>
                 </div>
                 <div className={styles.departButtton}>
                   {getFieldDecorator('depart', {
-                    initialValue: 'all',
+                    initialValue: '10',
                   })(
                     <Radio.Group onChange={this.getDepart}>
-                      <Radio.Button value="all">全部</Radio.Button>
-                      <Radio.Button value="in">内科</Radio.Button>
-                      <Radio.Button value="out">外科</Radio.Button>
-                      <Radio.Button value="other">其他</Radio.Button>
+                      {specialityCategoryList.length > 0 &&
+                        specialityCategoryList.map(v => (
+                          <Radio.Button value={v.category_code} key={v.category_code}>
+                            {v.category_name.slice(0, 2)}
+                          </Radio.Button>
+                        ))}
                     </Radio.Group>
                   )}
                 </div>
